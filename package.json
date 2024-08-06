@@ -1,0 +1,46 @@
+{
+	"name": "changy",
+	"version": "0.0.1",
+	"description": "An internal changelog cli.",
+	"type": "module",
+	"main": "/dist/index.mjs",
+	"module": "/dist/index.mjs",
+	"types": "/dist/index.d.ts",
+	"bin": "./bin.mjs",
+	"scripts": {
+		"start": "unbuild && node bin.mjs"
+	},
+	"files": [
+		"dist/index.mjs",
+		"dist/index.d.ts",
+		"bin.mjs"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Avanzar-PC/Avanzar-Chorus.Svelte.git#main"
+	},
+	"keywords": [
+		"changlog"
+	],
+	"author": "Aidan Bleser",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Avanzar-PC/Avanzar-Chorus.Svelte/issues"
+	},
+	"homepage": "https://github.com/Avanzar-PC/Avanzar-Chorus.Svelte/tree/main#readme",
+	"dependencies": {
+		"chalk": "^5.3.0",
+		"commander": "^12.1.0",
+		"enquirer": "^2.4.1",
+		"fs-extra": "^11.2.0",
+		"marked": "^13.0.3",
+		"remark-parse": "^11.0.0",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^22.1.0",
+		"prettier": "^3.3.3",
+		"unbuild": "^2.0.0"
+	}
+}
