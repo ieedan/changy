@@ -43,24 +43,40 @@ export const TIME_ZONES = [
 const ERROR = color.bgRedBright(color.black(' ERROR '));
 const WARN = color.bgYellow(color.black(' ERROR '));
 
+const PREFIX = '✨';
+
 export function error(msg: unknown) {
-	console.error(`${ERROR} ${msg}`);
+	console.error(`${PREFIX} ${ERROR} ${msg}`);
 }
 
 export function warn(msg: unknown) {
-	console.warn(`${WARN} ${msg}`);
+	console.warn(`${PREFIX} ${WARN} ${msg}`);
 }
 
 export function success(msg: unknown) {
-	console.log(color.green(`${msg}`));
+	console.log(color.green(`${PREFIX} ${msg}`));
 }
 
 // not sure why this is required by enquirer but it is
 export const cancel = () => {
-	success('Canceled...');
+	success(`${PREFIX} Canceled...`);
 	process.exit(0);
 };
 
 export function astToString(ast: Token[]): string {
 	return ast.map((node) => node.raw).join('');
+}
+
+export function toMap<T, K, V>(
+	arr: T[],
+	fn: (item: T, index: number) => [key: K, value: V]
+): Map<K, V> {
+	const map = new Map();
+
+	for (let i = 0; i < arr.length; i++) {
+		const kv = fn(arr[i], i);
+		map.set(kv[0], kv[1]);
+	}
+
+	return map;
 }

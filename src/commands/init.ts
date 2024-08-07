@@ -11,8 +11,7 @@ import * as settings from '../utils/settings';
 const optionsSchema = z.object({
 	cwd: z.string(),
 	timezone: z.enum(TIME_ZONES).optional(),
-	heading: z.string().optional(),
-	changeTypes: z.string().array().optional(),
+	changeCategories: z.string().array().optional(),
 	yes: z.boolean().optional(),
 });
 
@@ -29,8 +28,7 @@ export const init = new Command()
 			TIME_ZONES
 		)
 	)
-	.option('--heading <heading>', 'The heading above the change list.')
-	.option('--change-types [change-types...]', 'The types of changes.')
+	.option('--change-categories [change-categories...]', 'The types of changes.')
 	.option('-y, --yes', 'Skip all prompts and apply defaults.')
 	.action(async (options) => {
 		try {
@@ -51,15 +49,14 @@ async function run(options: Options) {
 		process.exit(1);
 	}
 
-	let changyOptions: { timezone: Timezone; heading: string; changeTypes: string[] } = {
+	let changyOptions: { timezone: Timezone; changeCategories: string[] } = {
 		timezone: 'UTC',
-		heading: "What's Changed?",
-		changeTypes: ['fix', 'feat'],
+		changeCategories: ['Added', 'Changed', 'Fixed'],
 	};
 
 	// if yes skip prompts and apply defaults ⬆️
 	if (!options.yes) {
-		const response: { timezone?: Timezone; heading?: string; changeTypes?: string[] } =
+		const response: { timezone?: Timezone; changeCategories?: string[] } =
 			await enquirer.prompt([
 				{
 					type: 'autocomplete',
@@ -71,27 +68,31 @@ async function run(options: Options) {
 					onCancel: cancel,
 				},
 				{
-					type: 'text',
-					skip: options.heading !== undefined,
-					message: 'List Heading: ',
-					initial: "What's Changed?",
-					name: 'heading',
-					onCancel: cancel,
-				},
-				{
 					type: 'list',
-					skip: options.changeTypes !== undefined,
-					message: 'Change Types: ',
-					initial: ['feat', 'fix'],
-					name: 'changeTypes',
+					skip: options.changeCategories !== undefined,
+					message: 'Change Categories: ',
+					initial: ['Added', 'Changed', 'Fixed'],
+					name: 'changeCategories',
+					validate: (value) => {
+						if (value.length == 0) {
+							return false;
+						}
+
+						for (const item of value) {
+							if (item.trim().length == 0) {
+								return false;
+							}
+						}
+
+						return true;
+					},
 					onCancel: cancel,
 				},
 			]);
 
 		changyOptions = {
 			timezone: options.timezone ?? response.timezone,
-			heading: options.heading ?? response.heading ?? '', // this wont happen
-			changeTypes: options.changeTypes ?? response.changeTypes ?? [], // this wont happen
+			changeCategories: options.changeCategories ?? response.changeCategories ?? [], // this wont happen
 		};
 	}
 
@@ -99,4 +100,6 @@ async function run(options: Options) {
 		path.resolve(options.cwd, SETTINGS_FILE),
 		JSON.stringify(changyOptions, null, 4)
 	);
+
+	success('Completed initialization...');
 }

@@ -10,6 +10,7 @@ export default defineBuildConfig({
 		'src/commands/init',
 		'src/utils/index',
 		'src/utils/settings',
+		'src/utils/format',
 	],
 	failOnWarn: false,
 	declaration: true,

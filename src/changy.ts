@@ -1,5 +1,5 @@
 import { program } from 'commander';
-import { add, init, latest } from './commands';
+import { add, format, init, latest } from './commands';
 import color from 'chalk';
 
 const changy = program
@@ -7,6 +7,7 @@ const changy = program
 	.description('Generate user friendly changelogs.')
 	.addCommand(init)
 	.addCommand(add)
-	.addCommand(latest);
+	.addCommand(latest)
+	.addCommand(format);
 
 export default changy;

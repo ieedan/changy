@@ -1,102 +1,73 @@
-```
-
- ______     __  __     ______     __   __     ______     __  __
-/\  ___\   /\ \_\ \   /\  __ \   /\ "-.\ \   /\  ___\   /\ \_\ \
-\ \ \____  \ \  __ \  \ \  __ \  \ \ \-.  \  \ \ \__ \  \ \____ \
- \ \_____\  \ \_\ \_\  \ \_\ \_\  \ \_\\"\_\  \ \_____\  \/\_____\
-  \/_____/   \/_/\/_/   \/_/\/_/   \/_/ \/_/   \/_____/   \/_____/
-
-
-```
+![changy](https://github.com/user-attachments/assets/9f5b7e4f-083e-4d4c-b6e6-a1d3c5d2c61e)
 
 # changy (change-e)
 
-A simple changelog CLI for user facing changelogs.
+A simple CLI for maintaining user facing changelogs.
 
 ```
 npm install -g changy
 ```
 
+## Why?
+
+Changesets are awesome but our users don't care about versioning. changy makes it easy to generate
+date-based changelogs that can show your applications development progress.
+
 ## .changyrc
-The config file for **changy**.
+
+The config file for **changy**. This allows you to configure your time zone as well as they change
+categories that will be listed in the changelog.
 
 ```js
 {
-    // the timezone to calculate the date off of
-    "timezone": "America/Chicago",
-    // the change list heading
-    "heading": "What's New?",
-    // types of changes to be prompted for
-    "changeTypes": [
-        "feat",
-        "fix"
+    "timezone": "UTC",
+    "changeCategories": [
+        "Added",
+        "Changed",
+        "Fixed"
     ]
 }
 ```
 
+### `changeCategories`
+
+These are what determines the categories of your changes and the order they will show up in your
+changelog.
+
+For example take this configuration:
+
+```json
+"changeCategories": [
+  "Added",
+  "Changed",
+  "Fixed"
+]
+```
+
+Resulting CHANGELOG.md format:
+
+```md
+# 2024.11.11
+
+## Added
+
+<!-- Your additions here -->
+
+## Changed
+
+<!-- Your changes here -->
+
+## Fixed
+
+<!-- Your fixes here -->
+```
+
+> [!NOTE] These will only appear in your changelog if they have changes associated with them.
+
 ## CLI Reference
 
-```
-Usage: changy [options] [command]
-
-Generate user friendly changelogs.
-
-Options:
-  -h, --help              display help for command
-
-Commands:
-  init [options]          Initialize changy.
-  add [options] [change]  Add a change to the CHANGELOG.
-  latest [options]        Get the latest changelog entry.
-  help [command]          display help for command
-```
-
-### Init
-
-Initialize changy.
+To see the most recent information for the CLI run:
 
 ```
-Usage: changy init [options]
-
-Initialize changy.
-
-Options:
-  -c, --cwd <cwd>                   The current working directory.
-  -tz, --timezone <timezone>        The timezone to date based off of. (choices: "America/Los_Angeles", "UTC" ...)
-  --heading <heading>               The heading above the change list.
-  --change-types [change-types...]  The types of changes.
-  -y, --yes                         Skip all prompts and apply defaults.
-  -h, --help                        display help for command
-```
-
-### Add
-
-Add a change to the CHANGELOG.
-
-```
-Usage: changy add [options] [change]
-
-Add a change to the CHANGELOG.
-
-Arguments:
-  change           Change to add to CHANGELOG.md.
-
-Options:
-  -c, --cwd <cwd>  The current working directory.
-  -h, --help       display help for command
-```
-
-### Latest
-
-Get the latest changelog entry.
-
-```
-Usage: changy latest [options]
-
-Get the latest changelog entry.
-
-Options:
-  -c, --cwd <cwd>  The current working directory.
-  --today          Only returns todays changelog. (default: false)
-  -h, --help       display help for command
+npx changy@latest --help
 ```

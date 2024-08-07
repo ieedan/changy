@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
 import z from 'zod';
-import { marked, type Token, type Tokens } from 'marked';
+import { marked, type TokensList, type Token, type Tokens } from 'marked';
 import pkg from 'enquirer';
 const { prompt } = pkg;
 import { DateTime } from 'luxon';
@@ -10,6 +10,7 @@ import * as settings from '../utils/settings';
 import color from 'chalk';
 import { astToString, cancel, error, intro, success } from '../utils';
 import TerminalRenderer from 'marked-terminal';
+import { correctToExpectedNewLines, format } from '../utils/format';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
@@ -49,15 +50,14 @@ async function run(change: string | undefined, options: Options) {
 		fs.createFileSync(changelogPath);
 	}
 
-	// this runs until canceled or the user is happy with the changeset
+	// this runs until canceled or the user is happy with the changelog
 	while (true) {
-		let response: { type: string; change?: string } = await prompt([
+		let response: { category: string; change?: string } = await prompt([
 			{
 				type: 'select',
 				message: 'What type of change is this?',
-				name: 'type',
-				// we have to do this because `CHANGE_TYPES` is readonly
-				choices: [...config.changeTypes],
+				name: 'category',
+				choices: [...config.changeCategories],
 				onCancel: cancel,
 			},
 			{
@@ -70,9 +70,17 @@ async function run(change: string | undefined, options: Options) {
 		]);
 
 		// reassign using options
-		response = { change: change ?? response.change, type: response.type };
+		response = { change: change ?? response.change, category: response.category };
 
-		let token = marked.lexer(`- **${response.type}:** ${response.change}`)[0];
+		let changeHeading: Tokens.Heading = {
+			type: 'heading',
+			depth: 2,
+			raw: `## ${response.category}\n\n`,
+			text: `## ${response.category}\n\n`,
+			tokens: [],
+		};
+
+		let token = marked.lexer(`- ${response.change}`)[0];
 		if (token.type != 'list') {
 			return; // this should never happen
 		}
@@ -80,51 +88,85 @@ async function run(change: string | undefined, options: Options) {
 
 		const changelogContent = fs.readFileSync(changelogPath).toString();
 
-		let ast = marked.lexer(changelogContent);
+		let ast: TokensList | Token[] = marked.lexer(changelogContent);
 
 		let i = 0;
 
 		let changelogOkay = false;
 
-		let found = false;
+		let changelogTokens: Token[] = [];
+
+		let foundCategory = false;
 		while (i < ast.length) {
 			let node = ast[i];
 
 			if (node.type == 'heading' && node.depth == 1 && node.text == formattedDate) {
-				found = true;
+				changelogTokens.push(node); // add heading to tokens
+
+				i++;
+				continue;
 			}
 
-			if (found && node.type == 'heading' && node.depth == 2 && node.text == config.heading) {
+			if (
+				changelogTokens.length > 0 &&
+				node.type == 'heading' &&
+				node.depth == 2 &&
+				node.raw.trim() == changeHeading.raw.trim()
+			) {
+				foundCategory = true;
+				changelogTokens.push(ast[i]);
 				i++;
 
 				if (ast[i].type == 'list') {
+					// modify the tree here
 					ast[i].raw += '\n' + listItem.raw;
 
-					// show the user their new changeset
-					changelogOkay = await confirmChangelog(ast[i - 2], ast[i - 1], ast[i]);
-
-					break;
+					changelogTokens.push(ast[i]);
+					i++;
+					continue;
 				}
+			}
+
+			if (
+				changelogTokens.length > 0 &&
+				((ast[i].type == 'heading' && (ast[i] as Tokens.Heading).depth == 1) ||
+					i >= ast.length - 1)
+			) {
+				if (node.type != 'heading') {
+					// this way it only adds if we need it
+					changelogTokens.push(ast[i]);
+					// and it moves past if added because it was already added and does not need to be included in the after slice
+					i++;
+				}
+
+				if (!foundCategory) {
+					changelogTokens = correctToExpectedNewLines(changelogTokens);
+
+					// add the category and change
+					changelogTokens.push(changeHeading);
+					changelogTokens.push(token);
+					// add trailing new lines
+					changelogTokens.push({ type: 'space', raw: '\n\n' });
+					ast = [...changelogTokens, ...ast.slice(i)];
+				}
+				break; // break on next heading
+			}
+
+			// add whitespace and filler tokens between
+			if (changelogTokens.length > 0) {
+				changelogTokens.push(ast[i]);
 			}
 
 			i++;
 		}
 
 		// we don't modify within the tree instead we create new nodes
-		if (!found) {
+		if (changelogTokens.length == 0) {
 			let date: Tokens.Heading = {
 				type: 'heading',
 				raw: `# ${formattedDate}\n\n`,
 				depth: 1,
 				text: `${formattedDate}`,
-				tokens: [],
-			};
-
-			let listHeading: Tokens.Heading = {
-				type: 'heading',
-				raw: `## ${config.heading}\n\n`,
-				depth: 2,
-				text: `${config.heading}`,
 				tokens: [],
 			};
 
@@ -137,27 +179,44 @@ async function run(change: string | undefined, options: Options) {
 				items: [],
 			};
 
-			changelogOkay = await confirmChangelog(date, listHeading, list);
+			changelogOkay = await confirmChangelog(...format(config, [date, changeHeading, list]));
 
-			ast.unshift(date, listHeading, list);
+			ast.unshift(date, changeHeading, list);
+		} else {
+			changelogOkay = await confirmChangelog(...format(config, changelogTokens));
 		}
 
 		// if accepted write changes and complete
 		if (changelogOkay) {
-			fs.writeFileSync(changelogPath, astToString(ast));
-			break;
+			fs.writeFileSync(changelogPath, astToString(format(config, ast)));
+
+			success(`Added to ${color.cyan('`CHANGELOG.md`')}.`);
+
+			// ask if we want to add more changes
+			const response: { yes: boolean } = await prompt({
+				type: 'confirm',
+				message: 'Add more changes?',
+				name: 'yes',
+				initial: false,
+				onCancel: cancel,
+			});
+
+			if (!response.yes) {
+				break;
+			}
 		}
 
 		// else we ask again
 	}
 
-	success(`Added to ${color.cyan('`CHANGELOG.md`')}.`);
+	success('All done!');
 }
 
 async function confirmChangelog(...nodes: Token[]): Promise<boolean> {
 	// render markdown in terminal
 	const md = await marked(astToString([...nodes]), { renderer: new TerminalRenderer() as any });
 
+	// add a newline to the top
 	console.log('');
 	// show changelog to user using `process.stdout.write` to prevent writing extra new line
 	process.stdout.write(md);
