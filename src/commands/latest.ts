@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
 import z from 'zod';
-import { marked } from 'marked';
+import { marked, type Token } from 'marked';
 import { astToString, error } from '../utils';
 import * as settings from '../utils/settings';
 import color from 'chalk';
@@ -10,6 +10,7 @@ import color from 'chalk';
 const optionsSchema = z.object({
 	cwd: z.string(),
 	today: z.boolean(),
+	withDate: z.boolean(),
 });
 
 type Options = z.infer<typeof optionsSchema>;
@@ -19,6 +20,7 @@ export const latest = new Command()
 	.description('Get the latest changelog entry.')
 	.option('-c, --cwd <cwd>', 'The current working directory.', process.cwd())
 	.option('--today', 'Only returns todays changelog.', false)
+	.option('--with-date', 'Includes the xxxx.xx.xx style date in the log.', false)
 	.action(async (options) => {
 		// don't show intro here only raw output
 
@@ -50,27 +52,60 @@ async function run(options: Options) {
 
 	let i = 0;
 
+	let dateHeading: Token | undefined = undefined;
+
+	let tokens: Token[] = [];
+
 	let found = false;
 	while (i < ast.length) {
 		let node = ast[i];
 
 		if (node.type == 'heading' && node.depth == 1) {
+			if (found) {
+				break; // stop at next heading
+			}
+
 			if (options.today && node.text !== formattedDate) {
 				i++;
 				continue;
 			}
+			dateHeading = node;
 			found = true;
+			i++;
+			continue;
 		}
 
-		if (found && node.type == 'heading' && node.depth == 2 && node.text == config.heading) {
+		if (
+			found &&
+			node.type == 'heading' &&
+			node.depth == 2 &&
+			config.changeCategories.includes(node.text.replace('##').trim())
+		) {
+			tokens.push(node);
 			i++;
 
 			if (ast[i].type == 'list') {
-				console.log(astToString([ast[i - 1], ast[i]]));
-				break;
+				tokens.push(ast[i]);
+				i++;
+				continue;
 			}
+		}
+		
+		// if found we just keep adding the tokens since for whitespace and stuff
+		if (found) {
+			tokens.push(ast[i]);
 		}
 
 		i++;
+	}
+
+	if (!dateHeading) {
+		return;
+	}
+
+	if (options.withDate) {
+		console.log(astToString([dateHeading, ...tokens]));
+	} else {
+		console.log(astToString([dateHeading, ...tokens]));
 	}
 }

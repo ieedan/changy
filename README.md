@@ -98,5 +98,6 @@ Get the latest changelog entry.
 Options:
   -c, --cwd <cwd>  The current working directory.
   --today          Only returns todays changelog. (default: false)
+  --with-date      Includes the xxxx.xx.xx style date in the log. (default: false)
   -h, --help       display help for command
 ```
