@@ -10,8 +10,8 @@ npm install -g changy
 
 ## Why?
 
-Changesets are awesome but our users don't care about versioning. changy makes it easy to generate
-date-based changelogs that can show your applications development progress.
+Changesets are awesome but our users don't care about versioning. **changy** makes it easy to
+generate date-based changelogs that can show your applications development progress.
 
 ## .changyrc
 
@@ -62,7 +62,8 @@ Resulting CHANGELOG.md format:
 <!-- Your fixes here -->
 ```
 
-> [!NOTE] These will only appear in your changelog if they have changes associated with them.
+> [!NOTE]
+> These will only appear in your changelog if they have changes associated with them.
 
 ## CLI Reference
 
