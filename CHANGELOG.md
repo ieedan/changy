@@ -2,7 +2,7 @@
 
 ## Added
 
-- 8.7 added
+- I added some stuff
 
 ## Changed
 
@@ -39,5 +39,3 @@
 ## Fixed
 
 - 8.5 fixed
-
-

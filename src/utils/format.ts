@@ -39,7 +39,7 @@ export function format(settings: Settings, ast: Token[]): Token[] {
 		if (node.type == 'heading' && node.depth == 1) {
 			if (currentChangelog != undefined) {
 				if (currentSection != undefined) {
-                    currentSection.tokens = correctToExpectedNewLines(currentSection.tokens ?? []);
+					currentSection.tokens = correctToExpectedNewLines(currentSection.tokens ?? []);
 					if (currentChangelog.sections) {
 						currentChangelog.sections.push(currentSection);
 					} else {
@@ -72,7 +72,7 @@ export function format(settings: Settings, ast: Token[]): Token[] {
 
 		if (currentChangelog && node.type == 'heading' && node.depth == 2) {
 			if (currentSection != undefined) {
-                currentSection.tokens = correctToExpectedNewLines(currentSection.tokens ?? []);
+				currentSection.tokens = correctToExpectedNewLines(currentSection.tokens ?? []);
 				if (currentChangelog.sections) {
 					currentChangelog.sections.push(currentSection);
 				} else {
@@ -207,8 +207,6 @@ export function correctToExpectedNewLines(tokens: Token[], count: number = 2): T
 			raw: '\n'.repeat(necessarySpacing),
 		});
 	}
-
-    console.log(final);
 
 	return tokens;
 }

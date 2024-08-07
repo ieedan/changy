@@ -10,7 +10,7 @@ import * as settings from '../utils/settings';
 import color from 'chalk';
 import { astToString, cancel, error, intro, success } from '../utils';
 import TerminalRenderer from 'marked-terminal';
-import { correctToExpectedNewLines } from '../utils/format';
+import { correctToExpectedNewLines, format } from '../utils/format';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
@@ -179,16 +179,16 @@ async function run(change: string | undefined, options: Options) {
 				items: [],
 			};
 
-			changelogOkay = await confirmChangelog(date, changeHeading, list);
+			changelogOkay = await confirmChangelog(...format(config, [date, changeHeading, list]));
 
 			ast.unshift(date, changeHeading, list);
 		} else {
-			changelogOkay = await confirmChangelog(...changelogTokens);
+			changelogOkay = await confirmChangelog(...format(config, changelogTokens));
 		}
 
 		// if accepted write changes and complete
 		if (changelogOkay) {
-			fs.writeFileSync(changelogPath, astToString(ast));
+			fs.writeFileSync(changelogPath, astToString(format(config, ast)));
 
 			success(`Added to ${color.cyan('`CHANGELOG.md`')}.`);
 
