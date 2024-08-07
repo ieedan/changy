@@ -67,6 +67,7 @@ async function run(options: Options) {
 
 			if (ast[i].type == 'list') {
 				console.log(astToString([ast[i - 1], ast[i]]));
+				break;
 			}
 		}
 

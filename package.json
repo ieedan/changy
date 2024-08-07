@@ -1,6 +1,6 @@
 {
 	"name": "changy",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A simple changelog CLI for user facing changelogs.",
 	"type": "module",
 	"main": "/dist/index.mjs",
