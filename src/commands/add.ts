@@ -122,7 +122,7 @@ async function run(change: string | undefined, options: Options) {
 
 			let listHeading: Tokens.Heading = {
 				type: 'heading',
-				raw: `## ${config.heading}\n`,
+				raw: `## ${config.heading}\n\n`,
 				depth: 2,
 				text: `${config.heading}`,
 				tokens: [],
