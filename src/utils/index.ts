@@ -43,7 +43,7 @@ export const TIME_ZONES = [
 const ERROR = color.bgRedBright(color.black(' ERROR '));
 const WARN = color.bgYellow(color.black(' ERROR '));
 
-const PREFIX = "✨";
+const PREFIX = '✨';
 
 export function error(msg: unknown) {
 	console.error(`${PREFIX} ${ERROR} ${msg}`);
@@ -65,4 +65,18 @@ export const cancel = () => {
 
 export function astToString(ast: Token[]): string {
 	return ast.map((node) => node.raw).join('');
+}
+
+export function toMap<T, K, V>(
+	arr: T[],
+	fn: (item: T, index: number) => [key: K, value: V]
+): Map<K, V> {
+	const map = new Map();
+
+	for (let i = 0; i < arr.length; i++) {
+		const kv = fn(arr[i], i);
+		map.set(kv[0], kv[1]);
+	}
+
+	return map;
 }

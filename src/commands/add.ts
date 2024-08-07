@@ -10,6 +10,7 @@ import * as settings from '../utils/settings';
 import color from 'chalk';
 import { astToString, cancel, error, intro, success } from '../utils';
 import TerminalRenderer from 'marked-terminal';
+import { correctToExpectedNewLines } from '../utils/format';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
@@ -139,35 +140,7 @@ async function run(change: string | undefined, options: Options) {
 				}
 
 				if (!foundCategory) {
-					// all of this ensures that we insert with the correct line spacing
-
-					// check last token for trailing new lines
-					let previous = changelogTokens[changelogTokens.length - 1];
-					let lastIndex = previous.raw.length - 1;
-					let newLines = 0;
-					while (lastIndex >= 0 && previous.raw[lastIndex] === '\n') {
-						newLines++;
-						lastIndex--;
-					}
-
-					// trims additional whitespace from last token
-					if (newLines > 2) {
-						// the raw is the only thing that matters in this case anyways
-						previous.raw = previous.raw.slice(0, previous.raw.length - (newLines - 2));
-
-						changelogTokens[changelogTokens.length - 1] = previous;
-					}
-
-					// based on how many trailing new lines there were we will add or not add our own new lines
-
-					let necessarySpacing = 2 - newLines;
-
-					if (necessarySpacing > 0) {
-						changelogTokens.push({
-							type: 'space',
-							raw: '\n'.repeat(necessarySpacing),
-						});
-					}
+					changelogTokens = correctToExpectedNewLines(changelogTokens);
 
 					// add the category and change
 					changelogTokens.push(changeHeading);
