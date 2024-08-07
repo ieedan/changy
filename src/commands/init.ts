@@ -2,17 +2,18 @@ import { Command, Option } from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
 import z from 'zod';
-import { TIME_ZONES } from '../utils/index';
-import pkg from 'enquirer';
+import { cancel, error, intro, success, TIME_ZONES } from '../utils/index';
 import { SETTINGS_FILE } from '../utils/settings';
-const { prompt } = pkg;
+import Enquirer from 'enquirer';
+const enquirer = new Enquirer();
+import * as settings from '../utils/settings';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
 	timezone: z.enum(TIME_ZONES).optional(),
 	heading: z.string().optional(),
 	changeTypes: z.string().array().optional(),
-	yes: z.boolean(),
+	yes: z.boolean().optional(),
 });
 
 type Options = z.infer<typeof optionsSchema>;
@@ -21,8 +22,8 @@ type Timezone = z.infer<typeof optionsSchema>['timezone'];
 
 export const init = new Command()
 	.command('init')
-	.description('Initialize changy')
-	.option('-c, --cwd <cwd>', 'The current working directory', process.cwd())
+	.description('Initialize changy.')
+	.option('-c, --cwd <cwd>', 'The current working directory.', process.cwd())
 	.addOption(
 		new Option('-tz, --timezone <timezone>', 'The timezone to date based off of.').choices(
 			TIME_ZONES
@@ -32,13 +33,24 @@ export const init = new Command()
 	.option('--change-types [change-types...]', 'The types of changes.')
 	.option('-y, --yes', 'Skip all prompts and apply defaults.')
 	.action(async (options) => {
-		const opts = optionsSchema.parse(options);
-		opts.cwd = path.resolve(opts.cwd);
+		try {
+			intro();
 
-		await run(options);
+			const opts = optionsSchema.parse(options);
+			opts.cwd = path.resolve(opts.cwd);
+
+			await run(options);
+		} catch (err) {
+			error(err);
+		}
 	});
 
 async function run(options: Options) {
+	if (settings.get(options.cwd) !== null) {
+		success('changy already initialized!');
+		process.exit(1);
+	}
+
 	let changyOptions: { timezone: Timezone; heading: string; changeTypes: string[] } = {
 		timezone: 'UTC',
 		heading: "What's Changed?",
@@ -48,7 +60,7 @@ async function run(options: Options) {
 	// if yes skip prompts and apply defaults ⬆️
 	if (!options.yes) {
 		const response: { timezone?: Timezone; heading?: string; changeTypes?: string[] } =
-			await prompt([
+			await enquirer.prompt([
 				{
 					type: 'autocomplete',
 					maxChoices: 5,
@@ -56,6 +68,7 @@ async function run(options: Options) {
 					choices: [...TIME_ZONES],
 					message: 'What timezone should we use?',
 					name: 'timezone',
+					onCancel: cancel,
 				},
 				{
 					type: 'text',
@@ -63,6 +76,7 @@ async function run(options: Options) {
 					message: 'List Heading: ',
 					initial: "What's Changed?",
 					name: 'heading',
+					onCancel: cancel,
 				},
 				{
 					type: 'list',
@@ -70,6 +84,7 @@ async function run(options: Options) {
 					message: 'Change Types: ',
 					initial: ['feat', 'fix'],
 					name: 'changeTypes',
+					onCancel: cancel,
 				},
 			]);
 

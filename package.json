@@ -1,33 +1,60 @@
 {
 	"name": "changy",
 	"version": "0.0.1",
-	"description": "An internal changelog cli.",
+	"description": "A simple changelog CLI for user facing changelogs.",
 	"type": "module",
 	"main": "/dist/index.mjs",
 	"module": "/dist/index.mjs",
 	"types": "/dist/index.d.ts",
 	"bin": "./bin.mjs",
 	"scripts": {
-		"start": "unbuild && node bin.mjs"
+		"start": "unbuild && node bin.mjs",
+		"format": "prettier . --write",
+		"build": "unbuild",
+		"check": "tsc --noEmit"
 	},
 	"files": [
-		"dist/index.mjs",
-		"dist/index.d.ts",
+		"dist",
+		"src",
+		"package.json",
+		"package-lock.json",
+		"README.md",
+		"tsconfig.json",
+		"LICENSE",
+		".prettierrc",
+		"build.config.ts",
+		".gitignore",
 		"bin.mjs"
 	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs"
+		}
+	},
+	"sideEffects": false,
+	"typesVersions": {
+		"*": {
+			"*": [
+				"./dist/*",
+				"./dist/index.d.ts"
+			]
+		}
+	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Avanzar-PC/Avanzar-Chorus.Svelte.git#main"
+		"url": "git+https://github.com/ieedan/changy"
 	},
 	"keywords": [
-		"changlog"
+		"changelog",
+		"date"
 	],
 	"author": "Aidan Bleser",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/Avanzar-PC/Avanzar-Chorus.Svelte/issues"
+		"url": "https://github.com/ieedan/changy/issues"
 	},
-	"homepage": "https://github.com/Avanzar-PC/Avanzar-Chorus.Svelte/tree/main#readme",
+	"homepage": "https://github.com/ieedan/changy/tree/main#readme",
 	"dependencies": {
 		"chalk": "^5.3.0",
 		"commander": "^12.1.0",
@@ -35,10 +62,12 @@
 		"fs-extra": "^11.2.0",
 		"luxon": "^3.5.0",
 		"marked": "^13.0.3",
+		"marked-terminal": "^7.1.0",
 		"remark-parse": "^11.0.0",
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
+		"@types/marked-terminal": "^6.1.1",
 		"@types/fs-extra": "^11.0.4",
 		"@types/luxon": "^3.4.2",
 		"@types/node": "^22.1.0",

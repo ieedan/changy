@@ -1,8 +1,9 @@
 import { program } from 'commander';
 import { add, init, latest } from './commands';
+import color from 'chalk';
 
 const changy = program
-	.name('changy')
+	.name(color.cyan('changy'))
 	.description('Generate user friendly changelogs.')
 	.addCommand(init)
 	.addCommand(add)
