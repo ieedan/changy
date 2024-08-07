@@ -18,6 +18,7 @@ npm install -g changy
 ```
 
 ## .changyrc
+
 The config file for **changy**.
 
 ```js

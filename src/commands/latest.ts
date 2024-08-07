@@ -90,7 +90,7 @@ async function run(options: Options) {
 				continue;
 			}
 		}
-		
+
 		// if found we just keep adding the tokens since for whitespace and stuff
 		if (found) {
 			tokens.push(ast[i]);

@@ -179,6 +179,13 @@ function sectionToTokens(section: Section): Token[] {
 export function correctToExpectedNewLines(tokens: Token[], count: number = 2): Token[] {
 	let final = tokens[tokens.length - 1];
 
+	// this will trim any additional `space` tokens
+	let i = tokens.length - 1;
+	while (final.type == 'space') {
+		tokens = tokens.slice(0, tokens.length - 1);
+		final = tokens[tokens.length - 1];
+	}
+
 	// all of this ensures that we insert with the correct line spacing
 
 	// check last token for trailing new lines
