@@ -9,6 +9,7 @@
 	"bin": "./bin.mjs",
 	"scripts": {
 		"start": "unbuild && node bin.mjs",
+		"test": "vitest",
 		"format": "prettier . --write",
 		"lint": "prettier --check . && eslint .",
 		"build": "unbuild",
@@ -83,7 +84,8 @@
 		"globals": "^15.9.0",
 		"prettier": "^3.3.3",
 		"typescript-eslint": "^8.0.1",
-		"unbuild": "^2.0.0"
+		"unbuild": "^2.0.0",
+		"vitest": "^2.0.5"
 	},
 	"overrides": {
 		"eslint": "^9.8.0"

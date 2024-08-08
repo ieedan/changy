@@ -140,7 +140,7 @@ function compareRawDate(a: string, b: string): number {
 	return rawToDate(b) - rawToDate(a);
 }
 
-function stripRawHeading(str: string): string {
+export function stripRawHeading(str: string): string {
 	const stripped = str.replaceAll('#', '').trim();
 
 	return stripped;
