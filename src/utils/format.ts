@@ -34,7 +34,7 @@ export function format(settings: Settings, ast: Token[]): Token[] {
 	let currentSection: Section | undefined = undefined;
 
 	while (i < ast.length) {
-		let node = ast[i];
+		const node = ast[i];
 
 		if (node.type == 'heading' && node.depth == 1) {
 			if (currentChangelog != undefined) {
@@ -180,7 +180,6 @@ export function correctToExpectedNewLines(tokens: Token[], count: number = 2): T
 	let final = tokens[tokens.length - 1];
 
 	// this will trim any additional `space` tokens
-	let i = tokens.length - 1;
 	while (final.type == 'space') {
 		tokens = tokens.slice(0, tokens.length - 1);
 		final = tokens[tokens.length - 1];
@@ -206,7 +205,7 @@ export function correctToExpectedNewLines(tokens: Token[], count: number = 2): T
 
 	// based on how many trailing new lines there were we will add or not add our own new lines
 
-	let necessarySpacing = count - newLines;
+	const necessarySpacing = count - newLines;
 
 	if (necessarySpacing > 0) {
 		tokens.push({

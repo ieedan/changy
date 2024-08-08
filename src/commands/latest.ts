@@ -54,11 +54,11 @@ async function run(options: Options) {
 
 	let dateHeading: Token | undefined = undefined;
 
-	let tokens: Token[] = [];
+	const tokens: Token[] = [];
 
 	let found = false;
 	while (i < ast.length) {
-		let node = ast[i];
+		const node = ast[i];
 
 		if (node.type == 'heading' && node.depth == 1) {
 			if (found) {

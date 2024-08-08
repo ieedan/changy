@@ -72,7 +72,7 @@ async function run(change: string | undefined, options: Options) {
 		// reassign using options
 		response = { change: change ?? response.change, category: response.category };
 
-		let changeHeading: Tokens.Heading = {
+		const changeHeading: Tokens.Heading = {
 			type: 'heading',
 			depth: 2,
 			raw: `## ${response.category}\n\n`,
@@ -80,11 +80,11 @@ async function run(change: string | undefined, options: Options) {
 			tokens: [],
 		};
 
-		let token = marked.lexer(`- ${response.change}`)[0];
+		const token = marked.lexer(`- ${response.change}`)[0];
 		if (token.type != 'list') {
 			return; // this should never happen
 		}
-		let listItem: Tokens.ListItem = token.items[0];
+		const listItem: Tokens.ListItem = token.items[0];
 
 		const changelogContent = fs.readFileSync(changelogPath).toString();
 
@@ -98,7 +98,7 @@ async function run(change: string | undefined, options: Options) {
 
 		let foundCategory = false;
 		while (i < ast.length) {
-			let node = ast[i];
+			const node = ast[i];
 
 			if (node.type == 'heading' && node.depth == 1 && node.text == formattedDate) {
 				changelogTokens.push(node); // add heading to tokens
@@ -162,7 +162,7 @@ async function run(change: string | undefined, options: Options) {
 
 		// we don't modify within the tree instead we create new nodes
 		if (changelogTokens.length == 0) {
-			let date: Tokens.Heading = {
+			const date: Tokens.Heading = {
 				type: 'heading',
 				raw: `# ${formattedDate}\n\n`,
 				depth: 1,
@@ -170,7 +170,7 @@ async function run(change: string | undefined, options: Options) {
 				tokens: [],
 			};
 
-			let list: Tokens.List = {
+			const list: Tokens.List = {
 				type: 'list',
 				raw: `${token.raw}\n\n`,
 				loose: false,
@@ -214,7 +214,10 @@ async function run(change: string | undefined, options: Options) {
 
 async function confirmChangelog(...nodes: Token[]): Promise<boolean> {
 	// render markdown in terminal
-	const md = await marked(astToString([...nodes]), { renderer: new TerminalRenderer() as any });
+	const md = await marked(astToString([...nodes]), {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		renderer: new TerminalRenderer() as any,
+	});
 
 	// add a newline to the top
 	console.log('');
