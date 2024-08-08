@@ -30,7 +30,7 @@ export const latest = new Command()
 		await run(options);
 	});
 
-async function run(options: Options) {
+async function run(options: Options): Promise<void> {
 	const config = settings.get(options.cwd);
 
 	if (config == null) {
@@ -104,8 +104,8 @@ async function run(options: Options) {
 	}
 
 	if (options.withDate) {
-		console.log(astToString([dateHeading, ...tokens]));
+		console.info(astToString([dateHeading, ...tokens]));
 	} else {
-		console.log(astToString([dateHeading, ...tokens]));
+		console.info(astToString([dateHeading, ...tokens]));
 	}
 }

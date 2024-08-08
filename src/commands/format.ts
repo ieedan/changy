@@ -27,7 +27,7 @@ export const format = new Command()
 		await run(options);
 	});
 
-async function run(options: Options) {
+async function run(options: Options): Promise<void> {
 	const config = settings.get(options.cwd);
 
 	if (config == null) {

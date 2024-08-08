@@ -1,3 +1,5 @@
+// this is completely overbuilt and will probably be moved out in the future
+
 import globals from 'globals';
 import pluginJs from '@eslint/js';
 import * as tseslint from 'typescript-eslint';
@@ -58,7 +60,20 @@ const commonConfig = {
 		globals: globals.browser,
 	},
 	rules: {
-		'no-console': 'error',
+		'no-new-object': 'error',
+		'object-shorthand': 'error',
+		'prefer-object-spread': 'error',
+		'prefer-template': 'error',
+		'template-curly-spacing': 'error',
+		'default-param-last': 'error',
+		'no-new-func': 'error',
+		'no-param-reassign': 'error',
+		'prefer-arrow-callback': 'error',
+		'nonblock-statement-body-position': 'error',
+		'no-else-return': 'error',
+		'spaced-comment': 'error',
+		'func-style': ['error', 'declaration', { allowArrowFunctions: false }],
+		'no-console': ['error', { allow: ['info', 'clear', 'error', 'warn'] }],
 		'no-nested-ternary': 'error',
 		'unicorn/filename-case': ['error', { case: 'kebabCase' }],
 		'custom/enforce-upper-case-as-const': 'error',
@@ -66,24 +81,41 @@ const commonConfig = {
 			'error',
 			{ autoFix: false, cspell: { words: ['changy', 'changyrc', 'millis', 'Kolkata'] } },
 		],
+		'@typescript-eslint/array-type': ['error', { default: 'array' }],
+		'@typescript-eslint/no-unused-vars': [
+			'error',
+			{ varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
+		],
+		'@typescript-eslint/explicit-function-return-type': 'error',
+		'@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+		'max-params': 'off',
+		'@typescript-eslint/max-params': 'error',
+		'@typescript-eslint/prefer-as-const': 'error',
 		'@typescript-eslint/naming-convention': [
 			'error',
 			{
-				selector: ['class', 'interface', 'typeAlias', 'enum'],
-				format: ['PascalCase'],
+				selector: 'default',
+				format: ['camelCase'],
+				leadingUnderscore: 'allow',
+				trailingUnderscore: 'forbid',
 			},
 			{
-				selector: ['function', 'method', 'property'],
-				format: ['camelCase'],
+				selector: 'typeLike',
+				format: ['PascalCase'],
+				leadingUnderscore: 'allow',
+				trailingUnderscore: 'forbid',
 			},
 			{
 				selector: 'variable',
 				modifiers: ['const'],
 				format: ['UPPER_CASE', 'camelCase'],
+				trailingUnderscore: 'forbid',
+				leadingUnderscore: 'allow',
 			},
 			{
-				selector: 'objectLiteralProperty',
-				format: null,
+				selector: 'import',
+				format: ['camelCase', 'PascalCase'],
+				trailingUnderscore: 'forbid',
 			},
 		],
 	},
@@ -94,7 +126,7 @@ export default [
 		ignores: ['**/dist/*', '**/node_modules/*', 'eslint.config.js'],
 	},
 	{
-		files: ['**/*.{ts}'],
+		files: ['**/*.ts'],
 		...commonConfig,
 		languageOptions: {
 			parser: tseslint.parser,

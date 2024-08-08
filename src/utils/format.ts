@@ -177,12 +177,14 @@ function sectionToTokens(section: Section): Token[] {
  * @returns
  */
 export function correctToExpectedNewLines(tokens: Token[], count: number = 2): Token[] {
-	let final = tokens[tokens.length - 1];
+	let newTokens = [...tokens];
+
+	let final = newTokens[newTokens.length - 1];
 
 	// this will trim any additional `space` tokens
 	while (final.type == 'space') {
-		tokens = tokens.slice(0, tokens.length - 1);
-		final = tokens[tokens.length - 1];
+		newTokens = newTokens.slice(0, newTokens.length - 1);
+		final = newTokens[newTokens.length - 1];
 	}
 
 	// all of this ensures that we insert with the correct line spacing
@@ -200,7 +202,7 @@ export function correctToExpectedNewLines(tokens: Token[], count: number = 2): T
 		// the raw is the only thing that matters in this case anyways
 		final.raw = final.raw.slice(0, final.raw.length - (newLines - count));
 
-		tokens[tokens.length - 1] = final;
+		newTokens[newTokens.length - 1] = final;
 	}
 
 	// based on how many trailing new lines there were we will add or not add our own new lines
@@ -208,11 +210,11 @@ export function correctToExpectedNewLines(tokens: Token[], count: number = 2): T
 	const necessarySpacing = count - newLines;
 
 	if (necessarySpacing > 0) {
-		tokens.push({
+		newTokens.push({
 			type: 'space',
 			raw: '\n'.repeat(necessarySpacing),
 		});
 	}
 
-	return tokens;
+	return newTokens;
 }

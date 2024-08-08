@@ -10,55 +10,30 @@ export const TITLE =
 	'  \\/_____/   \\/_/\\/_/   \\/_/\\/_/   \\/_/ \\/_/   \\/_____/   \\/_____/    \r\n' +
 	'                                                                      \r\n';
 
-export function intro() {
-	console.log(color.cyan(TITLE));
+export function intro(): void {
+	console.info(color.cyan(TITLE));
 }
-
-export const TIME_ZONES = [
-	'America/New_York',
-	'America/Chicago',
-	'America/Denver',
-	'America/Los_Angeles',
-	'America/Anchorage',
-	'America/Honolulu',
-	'Europe/London',
-	'Europe/Paris',
-	'Europe/Berlin',
-	'Europe/Moscow',
-	'Asia/Tokyo',
-	'Asia/Shanghai',
-	'Asia/Singapore',
-	'Asia/Dubai',
-	'Asia/Kolkata',
-	'Australia/Sydney',
-	'Australia/Perth',
-	'America/Sao_Paulo',
-	'America/Buenos_Aires',
-	'Africa/Cairo',
-	'Africa/Johannesburg',
-	'Pacific/Auckland',
-	'UTC',
-] as const;
 
 const ERROR = color.bgRedBright(color.black(' ERROR '));
 const WARN = color.bgYellow(color.black(' ERROR '));
 
 const PREFIX = '✨';
 
-export function error(msg: unknown) {
+export function error(msg: unknown): void {
 	console.error(`${PREFIX} ${ERROR} ${msg}`);
 }
 
-export function warn(msg: unknown) {
+export function warn(msg: unknown): void {
 	console.warn(`${PREFIX} ${WARN} ${msg}`);
 }
 
-export function success(msg: unknown) {
-	console.log(color.green(`${PREFIX} ${msg}`));
+export function success(msg: unknown): void {
+	console.info(color.green(`${PREFIX} ${msg}`));
 }
 
-// not sure why this is required by enquirer but it is
-export const cancel = () => {
+// not sure why this is required by enquirer but it is... so we need to disable eslint here
+// eslint-disable-next-line func-style
+export const cancel = (): boolean => {
 	success(`${PREFIX} Canceled...`);
 	process.exit(0);
 };

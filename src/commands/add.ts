@@ -32,7 +32,7 @@ export const add = new Command()
 		await run(z.string().optional().parse(change), options);
 	});
 
-async function run(change: string | undefined, options: Options) {
+async function run(change: string | undefined, options: Options): Promise<void> {
 	const config = settings.get(options.cwd);
 
 	if (config == null) {
@@ -119,7 +119,7 @@ async function run(change: string | undefined, options: Options) {
 
 				if (ast[i].type == 'list') {
 					// modify the tree here
-					ast[i].raw += '\n' + listItem.raw;
+					ast[i].raw += `\n${listItem.raw}`;
 
 					changelogTokens.push(ast[i]);
 					i++;
@@ -220,7 +220,7 @@ async function confirmChangelog(...nodes: Token[]): Promise<boolean> {
 	});
 
 	// add a newline to the top
-	console.log('');
+	console.info('');
 	// show changelog to user using `process.stdout.write` to prevent writing extra new line
 	process.stdout.write(md);
 
