@@ -2,13 +2,16 @@ import fs from 'fs-extra';
 import path from 'path';
 import { z } from 'zod';
 import { fromError } from 'zod-validation-error';
-import { error, TIME_ZONES } from '.';
+import { error } from '.';
 import color from 'chalk';
+import { IANAZone } from 'luxon';
 
 export const SETTINGS_FILE = '.changyrc' as const;
 
-const settingsSchema = z.object({
-	timezone: z.enum(TIME_ZONES),
+export const settingsSchema = z.object({
+	timezone: z.string().refine((tz) => IANAZone.isValidZone(tz), {
+		message: 'Invalid IANAZone please refer to https://www.iana.org/time-zones.',
+	}),
 	changeCategories: z.string().trim().min(1).array().min(1),
 });
 
