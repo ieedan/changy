@@ -44,7 +44,7 @@ For example take this configuration:
 ]
 ```
 
-Resulting CHANGELOG.md format:
+Resulting changelog format:
 
 ```md
 # 2024.11.11

@@ -9,6 +9,7 @@ import { IANAZone } from 'luxon';
 export const SETTINGS_FILE = '.changyrc' as const;
 
 export const settingsSchema = z.object({
+	path: z.string(),
 	timezone: z.string().refine((tz) => IANAZone.isValidZone(tz), {
 		message: 'Invalid IANAZone please refer to https://www.iana.org/time-zones.',
 	}),

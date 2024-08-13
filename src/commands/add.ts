@@ -20,8 +20,8 @@ type Options = z.infer<typeof optionsSchema>;
 
 export const add = new Command()
 	.command('add')
-	.description('Add a change to the CHANGELOG.')
-	.argument('[change]', 'Change to add to CHANGELOG.md.')
+	.description('Add a change to the changelog.')
+	.argument('[change]', 'Change to add to the changelog.')
 	.option('-c, --cwd <cwd>', 'The current working directory.', process.cwd())
 	.action(async (change, options) => {
 		intro();
@@ -44,7 +44,7 @@ async function run(change: string | undefined, options: Options): Promise<void> 
 
 	const formattedDate = `${today.year}.${today.month}.${today.day}`;
 
-	const changelogPath = path.resolve(options.cwd, 'CHANGELOG.md');
+	const changelogPath = path.resolve(options.cwd, config.path);
 
 	if (!fs.existsSync(changelogPath)) {
 		fs.createFileSync(changelogPath);
@@ -190,7 +190,7 @@ async function run(change: string | undefined, options: Options): Promise<void> 
 		if (changelogOkay) {
 			fs.writeFileSync(changelogPath, astToString(format(config, ast)));
 
-			success(`Added to ${color.cyan('`CHANGELOG.md`')}.`);
+			success(`Added to ${color.cyan(`\`${config.path}\``)}.`);
 
 			// ask if we want to add more changes
 			const response: { yes: boolean } = await prompt({

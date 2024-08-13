@@ -3,6 +3,7 @@ import { type Settings, settingsSchema } from '../src/utils/settings';
 
 test('Catches invalid timezone', () => {
 	const settings: Settings = {
+		path: 'CHANGELOG.md',
 		timezone: 'Invalid/TimeZone',
 		changeCategories: ['Added', 'Changed', 'Fixed'],
 	};
@@ -14,6 +15,7 @@ test('Catches invalid timezone', () => {
 
 test('Catches invalid categories', () => {
 	const settings: Settings = {
+		path: 'CHANGELOG.md',
 		timezone: 'UTC',
 		changeCategories: [],
 	};
@@ -25,6 +27,7 @@ test('Catches invalid categories', () => {
 
 test('Allows valid config', () => {
 	const settings: Settings = {
+		path: 'CHANGELOG.md',
 		timezone: 'UTC',
 		changeCategories: ['Added', 'Changed', 'Fixed'],
 	};

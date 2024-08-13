@@ -42,7 +42,7 @@ async function run(options: Options): Promise<void> {
 
 	const formattedDate = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
 
-	const changelogPath = path.resolve(options.cwd, 'CHANGELOG.md');
+	const changelogPath = path.resolve(options.cwd, config.path);
 
 	if (!fs.existsSync(changelogPath)) {
 		fs.createFileSync(changelogPath);
