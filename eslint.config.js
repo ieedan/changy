@@ -88,8 +88,6 @@ const commonConfig = {
 		],
 		'@typescript-eslint/explicit-function-return-type': 'error',
 		'@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-		'max-params': 'off',
-		'@typescript-eslint/max-params': 'error',
 		'@typescript-eslint/prefer-as-const': 'error',
 		'@typescript-eslint/naming-convention': [
 			'error',

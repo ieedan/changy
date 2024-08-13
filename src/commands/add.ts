@@ -10,7 +10,8 @@ import * as settings from '../utils/settings';
 import color from 'chalk';
 import { astToString, cancel, error, intro, success } from '../utils';
 import TerminalRenderer from 'marked-terminal';
-import { correctToExpectedNewLines, format } from '../utils/format';
+import { correctToExpectedNewLines, format, stripRawHeading } from '../utils/format';
+import rfdc from 'rfdc';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
@@ -233,4 +234,81 @@ async function confirmChangelog(...nodes: Token[]): Promise<boolean> {
 	});
 
 	return response.yes;
+}
+
+export function addChange(
+	response: { change: string; category: string },
+	formattedDate: string,
+	config: settings.Settings,
+	ast: Token[]
+): Token[] {
+	let newAst: Token[] = rfdc()(ast);
+
+	// walk the tree
+
+	let i = 0;
+	let foundCategory = false;
+	let foundDate = false;
+	while (i < ast.length) {
+		// just a clone we don't want to mutate
+		let node = newAst[i];
+
+		if (node.type == 'heading' && node.depth == 1 && node.text == formattedDate) {
+			foundDate = true;
+
+			i++;
+			continue;
+		}
+
+		if (
+			foundDate &&
+			node.type == 'heading' &&
+			node.depth == 2 &&
+			stripRawHeading(node.raw) == response.category
+		) {
+			foundCategory = true;
+			i++;
+			node = newAst[i];
+
+			if (newAst[i].type == 'list') {
+				// trim whitespace from the end of the list
+				newAst[i].raw = newAst[i].raw.trim();
+
+				// modify the tree here
+				newAst[i].raw += `\n- ${response.change}`;
+				i++;
+				continue;
+			} else {
+				error(`Expected list after \`${newAst[i - 1].raw.trim()}\``);
+				return ast; // return unmodified ast
+			}
+		}
+
+		// if is next h1 heading or is at end
+		if (foundDate && ((node.type == 'heading' && node.depth == 1) || i >= newAst.length - 1)) {
+			if (!foundCategory) {
+				// make marked generate the correct tokens for us
+				const tokens = marked.lexer(`## ${response.category}\n\n- ${response.change}\n\n`);
+
+				newAst = [...newAst.slice(0, i), ...tokens, ...newAst.slice(i)];
+			}
+		}
+
+		i++;
+	}
+
+	// if the heading was never found
+	if (!foundCategory) {
+		const tokens = marked.lexer(
+			`# ${formattedDate}\n\n## ${response.category}\n\n- ${response.change}\n\n`
+		);
+
+		newAst = [...tokens, ...newAst.filter(a => a != undefined)]; // put the new tokens at the beginning
+		// even if it is not the correct order it will be sorted when formatted
+	}
+
+	// format
+	newAst = format(config, newAst);
+
+	return newAst;
 }
