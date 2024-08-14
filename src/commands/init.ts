@@ -47,7 +47,7 @@ async function run(options: Options): Promise<void> {
 
 	const settingsPath = path.resolve(options.cwd, SETTINGS_FILE);
 
-	fs.writeFileSync(settingsPath, JSON.stringify(options, null, 4));
+	fs.writeFileSync(settingsPath, JSON.stringify({ ...options, cwd: undefined }, null, 4));
 
 	success('Completed initialization...');
 }

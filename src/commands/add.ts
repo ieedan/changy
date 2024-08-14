@@ -2,16 +2,18 @@ import { Command } from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
 import z from 'zod';
-import { marked, type TokensList, type Token, type Tokens } from 'marked';
+import { marked, type Token } from 'marked';
 import pkg from 'enquirer';
 const { prompt } = pkg;
 import { DateTime } from 'luxon';
 import * as settings from '../utils/settings';
 import color from 'chalk';
-import { astToString, cancel, error, intro, success } from '../utils';
+import { cancel, error, intro, success } from '../utils';
 import TerminalRenderer from 'marked-terminal';
-import { correctToExpectedNewLines, format, stripRawHeading } from '../utils/format';
+import { format } from '../utils/format';
 import rfdc from 'rfdc';
+import { getHistory } from './latest';
+import { astToString } from '../utils/ast';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
@@ -53,7 +55,7 @@ async function run(change: string | undefined, options: Options): Promise<void> 
 
 	// this runs until canceled or the user is happy with the changelog
 	while (true) {
-		let response: { category: string; change?: string } = await prompt([
+		let response: { category: string; change: string } = await prompt([
 			{
 				type: 'select',
 				message: 'What type of change is this?',
@@ -73,123 +75,19 @@ async function run(change: string | undefined, options: Options): Promise<void> 
 		// reassign using options
 		response = { change: change ?? response.change, category: response.category };
 
-		const changeHeading: Tokens.Heading = {
-			type: 'heading',
-			depth: 2,
-			raw: `## ${response.category}\n\n`,
-			text: `## ${response.category}\n\n`,
-			tokens: [],
-		};
-
-		const token = marked.lexer(`- ${response.change}`)[0];
-		if (token.type != 'list') {
-			return; // this should never happen
-		}
-		const listItem: Tokens.ListItem = token.items[0];
-
 		const changelogContent = fs.readFileSync(changelogPath).toString();
 
-		let ast: TokensList | Token[] = marked.lexer(changelogContent);
+		const ast = marked.lexer(changelogContent);
 
-		let i = 0;
+		const newAst = addChange(response, formattedDate, config, ast);
 
-		let changelogOkay = false;
+		const newChangelog = getHistory(newAst, { today: true }, config);
 
-		let changelogTokens: Token[] = [];
-
-		let foundCategory = false;
-		while (i < ast.length) {
-			const node = ast[i];
-
-			if (node.type == 'heading' && node.depth == 1 && node.text == formattedDate) {
-				changelogTokens.push(node); // add heading to tokens
-
-				i++;
-				continue;
-			}
-
-			if (
-				changelogTokens.length > 0 &&
-				node.type == 'heading' &&
-				node.depth == 2 &&
-				node.raw.trim() == changeHeading.raw.trim()
-			) {
-				foundCategory = true;
-				changelogTokens.push(ast[i]);
-				i++;
-
-				if (ast[i].type == 'list') {
-					// modify the tree here
-					ast[i].raw += `\n${listItem.raw}`;
-
-					changelogTokens.push(ast[i]);
-					i++;
-					continue;
-				}
-			}
-
-			if (
-				changelogTokens.length > 0 &&
-				((ast[i].type == 'heading' && (ast[i] as Tokens.Heading).depth == 1) ||
-					i >= ast.length - 1)
-			) {
-				if (node.type != 'heading') {
-					// this way it only adds if we need it
-					changelogTokens.push(ast[i]);
-					// and it moves past if added because it was already added and does not need to be included in the after slice
-					i++;
-				}
-
-				if (!foundCategory) {
-					changelogTokens = correctToExpectedNewLines(changelogTokens);
-
-					// add the category and change
-					changelogTokens.push(changeHeading);
-					changelogTokens.push(token);
-					// add trailing new lines
-					changelogTokens.push({ type: 'space', raw: '\n\n' });
-					ast = [...changelogTokens, ...ast.slice(i)];
-				}
-				break; // break on next heading
-			}
-
-			// add whitespace and filler tokens between
-			if (changelogTokens.length > 0) {
-				changelogTokens.push(ast[i]);
-			}
-
-			i++;
-		}
-
-		// we don't modify within the tree instead we create new nodes
-		if (changelogTokens.length == 0) {
-			const date: Tokens.Heading = {
-				type: 'heading',
-				raw: `# ${formattedDate}\n\n`,
-				depth: 1,
-				text: `${formattedDate}`,
-				tokens: [],
-			};
-
-			const list: Tokens.List = {
-				type: 'list',
-				raw: `${token.raw}\n\n`,
-				loose: false,
-				ordered: false,
-				start: '',
-				items: [],
-			};
-
-			changelogOkay = await confirmChangelog(...format(config, [date, changeHeading, list]));
-
-			ast.unshift(date, changeHeading, list);
-		} else {
-			changelogOkay = await confirmChangelog(...format(config, changelogTokens));
-		}
+		const changelogOkay = await confirmChangelog(...newChangelog);
 
 		// if accepted write changes and complete
 		if (changelogOkay) {
-			fs.writeFileSync(changelogPath, astToString(format(config, ast)));
+			fs.writeFileSync(changelogPath, astToString(newAst));
 
 			success(`Added to ${color.cyan(`\`${config.path}\``)}.`);
 
@@ -242,31 +140,28 @@ export function addChange(
 	config: settings.Settings,
 	ast: Token[]
 ): Token[] {
-	let newAst: Token[] = rfdc()(ast);
+	let newAst: Token[] = rfdc()(ast).filter((a) => a != undefined);
 
 	// walk the tree
 
 	let i = 0;
-	let foundCategory = false;
-	let foundDate = false;
+	let foundCategory: number | undefined;
+	let foundDate: number | undefined;
 	while (i < ast.length) {
 		// just a clone we don't want to mutate
 		let node = newAst[i];
 
 		if (node.type == 'heading' && node.depth == 1 && node.text == formattedDate) {
-			foundDate = true;
-
-			i++;
-			continue;
+			foundDate = i;
 		}
 
 		if (
-			foundDate &&
+			foundDate != undefined &&
 			node.type == 'heading' &&
 			node.depth == 2 &&
-			stripRawHeading(node.raw) == response.category
+			node.text == response.category
 		) {
-			foundCategory = true;
+			foundCategory = i;
 			i++;
 			node = newAst[i];
 
@@ -276,21 +171,28 @@ export function addChange(
 
 				// modify the tree here
 				newAst[i].raw += `\n- ${response.change}`;
-				i++;
-				continue;
-			} else {
-				error(`Expected list after \`${newAst[i - 1].raw.trim()}\``);
-				return ast; // return unmodified ast
 			}
 		}
 
 		// if is next h1 heading or is at end
-		if (foundDate && ((node.type == 'heading' && node.depth == 1) || i >= newAst.length - 1)) {
-			if (!foundCategory) {
+		if (
+			foundDate != undefined &&
+			((node.type == 'heading' && node.depth == 1 && foundDate != i) ||
+				i >= newAst.length - 1)
+		) {
+			if (foundCategory == undefined) {
 				// make marked generate the correct tokens for us
-				const tokens = marked.lexer(`## ${response.category}\n\n- ${response.change}\n\n`);
-
-				newAst = [...newAst.slice(0, i), ...tokens, ...newAst.slice(i)];
+				const tokens = marked
+					.lexer(`## ${response.category}\n\n- ${response.change}\n\n`)
+					.filter((a) => a != undefined);
+				// is at end
+				if (i >= newAst.length - 1) {
+					// put at end
+					newAst.push(...tokens);
+				} else {
+					// put before this heading
+					newAst = [...newAst.slice(0, i), ...tokens, ...newAst.slice(i)];
+				}
 			}
 		}
 
@@ -298,12 +200,12 @@ export function addChange(
 	}
 
 	// if the heading was never found
-	if (!foundCategory) {
+	if (foundCategory == undefined && foundDate == undefined) {
 		const tokens = marked.lexer(
 			`# ${formattedDate}\n\n## ${response.category}\n\n- ${response.change}\n\n`
 		);
 
-		newAst = [...tokens, ...newAst.filter(a => a != undefined)]; // put the new tokens at the beginning
+		newAst = [...tokens, ...newAst.filter((a) => a != undefined)]; // put the new tokens at the beginning
 		// even if it is not the correct order it will be sorted when formatted
 	}
 

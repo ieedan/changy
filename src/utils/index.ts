@@ -1,5 +1,4 @@
 import color from 'chalk';
-import type { Token } from 'marked';
 
 export const TITLE =
 	'\r\n' +
@@ -37,10 +36,6 @@ export const cancel = (): boolean => {
 	success(`${PREFIX} Canceled...`);
 	process.exit(0);
 };
-
-export function astToString(ast: Token[]): string {
-	return ast.map((node) => node.raw).join('');
-}
 
 export function toMap<T, K, V>(
 	arr: T[],

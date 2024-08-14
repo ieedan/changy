@@ -115,6 +115,10 @@ const commonConfig = {
 				format: ['camelCase', 'PascalCase'],
 				trailingUnderscore: 'forbid',
 			},
+			{
+				selector: 'objectLiteralProperty',
+				format: null,
+			},
 		],
 	},
 };

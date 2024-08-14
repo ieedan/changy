@@ -3,10 +3,11 @@ import fs from 'fs-extra';
 import path from 'path';
 import z from 'zod';
 import { marked, type TokensList, type Token } from 'marked';
-import { astToString, error, success } from '../utils';
+import { error, success } from '../utils';
 import * as settings from '../utils/settings';
 import color from 'chalk';
 import { format as fmt } from '../utils/format';
+import { astToString } from '../utils/ast';
 
 const optionsSchema = z.object({
 	cwd: z.string(),

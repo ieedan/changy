@@ -1,8 +1,13 @@
 import { marked } from 'marked';
 import { expect, test } from 'vitest';
 import { format, stripRawHeading } from '../src/utils/format';
+import type { Settings } from '../src/utils/settings';
 
-const SETTINGS = { timezone: 'UTC', changeCategories: ['Added', 'Changed', 'Fixed'] };
+const SETTINGS: Settings = {
+	path: 'CHANGELOG.md',
+	timezone: 'UTC',
+	changeCategories: ['Added', 'Changed', 'Fixed'],
+};
 
 test('Reorders changelogs by date', () => {
 	const md = `# 2024.8.5
