@@ -3,14 +3,17 @@ import fs from 'fs-extra';
 import path from 'path';
 import z from 'zod';
 import { marked, type Token } from 'marked';
-import { astToString, error } from '../utils';
+import { error } from '../utils';
 import * as settings from '../utils/settings';
 import color from 'chalk';
+import { format } from '../utils/format';
+import { astToObject, astToString } from '../utils/ast';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
 	today: z.boolean(),
-	withDate: z.boolean(),
+	date: z.string().optional(),
+	json: z.boolean(),
 });
 
 type Options = z.infer<typeof optionsSchema>;
@@ -20,7 +23,8 @@ export const latest = new Command()
 	.description('Get the latest changelog entry.')
 	.option('-c, --cwd <cwd>', 'The current working directory.', process.cwd())
 	.option('--today', 'Only returns todays changelog.', false)
-	.option('--with-date', 'Includes the xxxx.xx.xx style date in the log.', false)
+	.option('--date <date>', 'The specific date to get. (Format as yyyy.MM.dd)')
+	.option('--json', 'Output the result in JSON', false)
 	.action(async (options) => {
 		// don't show intro here only raw output
 
@@ -38,11 +42,7 @@ async function run(options: Options): Promise<void> {
 		process.exit(0);
 	}
 
-	const today = new Date();
-
-	const formattedDate = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
-
-	const changelogPath = path.resolve(options.cwd, 'CHANGELOG.md');
+	const changelogPath = path.resolve(options.cwd, config.path);
 
 	if (!fs.existsSync(changelogPath)) {
 		fs.createFileSync(changelogPath);
@@ -50,62 +50,70 @@ async function run(options: Options): Promise<void> {
 
 	const ast = marked.lexer(fs.readFileSync(changelogPath).toString());
 
+	const entry = getHistory(ast, options, config);
+
+	if (entry.length != 0) {
+		if (options.json) {
+			console.info(JSON.stringify(astToObject(entry)[0], null, 2));
+		} else {
+			console.info(astToString(entry));
+		}
+	}
+}
+
+export function getHistory(
+	ast: Token[],
+	options: { today: boolean; date?: string },
+	config: settings.Settings
+): Token[] {
+	let latest = true;
+
+	let date = options.date;
+
+	if (!date && options.today) {
+		const today = new Date();
+
+		date = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
+	}
+
+	// if the date is undefined then we just get the latest
+	latest = date == undefined;
+
+	const formattedAst = format(
+		config,
+		ast.filter((a) => a != undefined)
+	);
+
 	let i = 0;
+	const entry: Token[] = [];
+	let foundDate = false;
+	while (i < formattedAst.length) {
+		const node = formattedAst[i];
 
-	let dateHeading: Token | undefined = undefined;
-
-	const tokens: Token[] = [];
-
-	let found = false;
-	while (i < ast.length) {
-		const node = ast[i];
-
-		if (node.type == 'heading' && node.depth == 1) {
-			if (found) {
-				break; // stop at next heading
-			}
-
-			if (options.today && node.text !== formattedDate) {
-				i++;
-				continue;
-			}
-			dateHeading = node;
-			found = true;
+		// if latest then mark first heading if date then match the heading date
+		if (
+			!foundDate &&
+			node.type == 'heading' &&
+			node.depth == 1 &&
+			(latest || node.text == date)
+		) {
+			foundDate = true;
+			entry.push(node);
 			i++;
 			continue;
 		}
 
-		if (
-			found &&
-			node.type == 'heading' &&
-			node.depth == 2 &&
-			config.changeCategories.includes(node.text.replace('##').trim())
-		) {
-			tokens.push(node);
-			i++;
-
-			if (ast[i].type == 'list') {
-				tokens.push(ast[i]);
-				i++;
-				continue;
-			}
+		if (foundDate && node.type == 'heading' && node.depth == 1) {
+			break;
 		}
 
-		// if found we just keep adding the tokens since for whitespace and stuff
-		if (found) {
-			tokens.push(ast[i]);
+		// once found just add the tokens to the end or next heading
+		if (foundDate) {
+			entry.push(node);
 		}
 
 		i++;
 	}
 
-	if (!dateHeading) {
-		return;
-	}
-
-	if (options.withDate) {
-		console.info(astToString([dateHeading, ...tokens]));
-	} else {
-		console.info(astToString([dateHeading, ...tokens]));
-	}
+	return format(config, entry);
 }

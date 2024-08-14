@@ -177,6 +177,8 @@ function sectionToTokens(section: Section): Token[] {
  * @returns
  */
 export function correctToExpectedNewLines(tokens: Token[], count: number = 2): Token[] {
+	if (tokens.length == 0) return [];
+
 	let newTokens = [...tokens];
 
 	let final = newTokens[newTokens.length - 1];

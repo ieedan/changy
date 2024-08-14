@@ -3,10 +3,11 @@ import fs from 'fs-extra';
 import path from 'path';
 import z from 'zod';
 import { marked, type TokensList, type Token } from 'marked';
-import { astToString, error, success } from '../utils';
+import { error, success } from '../utils';
 import * as settings from '../utils/settings';
 import color from 'chalk';
 import { format as fmt } from '../utils/format';
+import { astToString } from '../utils/ast';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
@@ -16,7 +17,7 @@ type Options = z.infer<typeof optionsSchema>;
 
 export const format = new Command()
 	.command('format')
-	.description('Format the CHANGELOG.md file.')
+	.description('Format the changelog file.')
 	.option('-c, --cwd <cwd>', 'The current working directory.', process.cwd())
 	.action(async (options) => {
 		// don't show intro here only raw output
@@ -35,10 +36,10 @@ async function run(options: Options): Promise<void> {
 		process.exit(0);
 	}
 
-	const changelogPath = path.resolve(options.cwd, 'CHANGELOG.md');
+	const changelogPath = path.resolve(options.cwd, config.path);
 
 	if (!fs.existsSync(changelogPath)) {
-		success('CHANGELOG.md has not yet been created!');
+		success('changelog file has not yet been created!');
 		process.exit(0);
 	}
 

@@ -1,5 +1,4 @@
 import color from 'chalk';
-import type { Token } from 'marked';
 
 export const TITLE =
 	'\r\n' +
@@ -15,7 +14,7 @@ export function intro(): void {
 }
 
 const ERROR = color.bgRedBright(color.black(' ERROR '));
-const WARN = color.bgYellow(color.black(' ERROR '));
+const WARN = color.bgYellow(color.black(' WARN '));
 
 const PREFIX = '✨';
 
@@ -37,10 +36,6 @@ export const cancel = (): boolean => {
 	success(`${PREFIX} Canceled...`);
 	process.exit(0);
 };
-
-export function astToString(ast: Token[]): string {
-	return ast.map((node) => node.raw).join('');
-}
 
 export function toMap<T, K, V>(
 	arr: T[],

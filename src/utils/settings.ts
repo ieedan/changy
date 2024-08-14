@@ -2,13 +2,14 @@ import fs from 'fs-extra';
 import path from 'path';
 import { z } from 'zod';
 import { fromError } from 'zod-validation-error';
-import { error } from '.';
+import { error, warn } from '.';
 import color from 'chalk';
 import { IANAZone } from 'luxon';
 
 export const SETTINGS_FILE = '.changyrc' as const;
 
 export const settingsSchema = z.object({
+	path: z.string(),
 	timezone: z.string().refine((tz) => IANAZone.isValidZone(tz), {
 		message: 'Invalid IANAZone please refer to https://www.iana.org/time-zones.',
 	}),
@@ -25,6 +26,15 @@ export function get(cwd: string): Settings | null {
 	}
 
 	const settings = JSON.parse(fs.readFileSync(settingsPath).toString());
+
+	if (settings['path'] == undefined) {
+		// this allows for backwards compatibility with older versions (should be removed with a major)
+		warn(
+			`Newer versions of ${color.cyan('changy')} require you to configure a "path" for your changelog file. Please specify it in your .changyrc file.`
+		);
+		warn('Using `CHANGELOG.md` for now.');
+		settings['path'] = 'CHANGELOG.md';
+	}
 
 	try {
 		return settingsSchema.parse(settings);
