@@ -14,7 +14,7 @@ export function intro(): void {
 }
 
 const ERROR = color.bgRedBright(color.black(' ERROR '));
-const WARN = color.bgYellow(color.black(' ERROR '));
+const WARN = color.bgYellow(color.black(' WARN '));
 
 const PREFIX = '✨';
 
