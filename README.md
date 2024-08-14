@@ -4,7 +4,7 @@
 
 A simple CLI for maintaining user facing changelogs.
 
-```
+```bash
 npm install -g changy
 ```
 
@@ -21,6 +21,7 @@ categories that will be listed in the changelog.
 ```js
 {
     "timezone": "UTC",
+    "path": "CHANGELOG.md",
     "changeCategories": [
         "Added",
         "Changed",
