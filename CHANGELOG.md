@@ -1,5 +1,11 @@
 # changy
 
+## 0.2.1
+
+### Patch Changes
+
+- ffc017d: fix: Changes would be added multiple times
+
 ## 0.2.0
 
 ### Minor Changes
