@@ -12,7 +12,7 @@ const settings: Settings = {
 test('Get latest from single', () => {
 	const initial = '# 2024.8.13\n\n## Added\n\n- My addition\n';
 
-	const entry = getHistory(marked.lexer(initial), { cwd: '.', today: false }, settings);
+	const entry = getHistory(marked.lexer(initial), { today: false }, settings);
 
 	expect(entry[0].raw).toBe('# 2024.8.13\n\n');
 	expect(entry[1].raw).toBe('## Added\n\n');
@@ -23,7 +23,7 @@ test('Get latest from multiple', () => {
 	const initial =
 		'# 2024.8.14\n\n## Added\n\n- My addition\n\n# 2024.8.13\n\n## Added\n\n- My addition\n';
 
-	const entry = getHistory(marked.lexer(initial), { cwd: '.', today: false }, settings);
+	const entry = getHistory(marked.lexer(initial), { today: false }, settings);
 
 	expect(entry.length).toBe(4); // only want to get the latest entry
 	expect(entry[0].raw).toBe('# 2024.8.14\n\n');
@@ -34,11 +34,7 @@ test('Get latest from multiple', () => {
 test('Get date from single', () => {
 	const initial = '# 2024.8.13\n\n## Added\n\n- My addition\n';
 
-	const entry = getHistory(
-		marked.lexer(initial),
-		{ cwd: '.', today: false, date: '2024.8.13' },
-		settings
-	);
+	const entry = getHistory(marked.lexer(initial), { today: false, date: '2024.8.13' }, settings);
 
 	expect(entry.length).toBe(3); // only want to get the latest entry
 	expect(entry[0].raw).toBe('# 2024.8.13\n\n');
@@ -50,11 +46,7 @@ test('Get date from multiple', () => {
 	const initial =
 		'# 2024.8.14\n\n## Added\n\n- My addition\n\n# 2024.8.13\n\n## Added\n\n- My addition\n';
 
-	const entry = getHistory(
-		marked.lexer(initial),
-		{ cwd: '.', today: false, date: '2024.8.13' },
-		settings
-	);
+	const entry = getHistory(marked.lexer(initial), { today: false, date: '2024.8.13' }, settings);
 
 	expect(entry.length).toBe(3); // only want to get the latest entry
 	expect(entry[0].raw).toBe('# 2024.8.13\n\n');
@@ -66,11 +58,7 @@ test('Get date from multiple in middle', () => {
 	const initial =
 		'# 2024.8.14\n\n## Added\n\n- My addition 8.14\n\n# 2024.8.13\n\n## Added\n\n- My addition\n\n# 2024.8.12\n\n## Added\n\n- My addition 8.12\n';
 
-	const entry = getHistory(
-		marked.lexer(initial),
-		{ cwd: '.', today: false, date: '2024.8.13' },
-		settings
-	);
+	const entry = getHistory(marked.lexer(initial), { today: false, date: '2024.8.13' }, settings);
 
 	expect(entry.length).toBe(4); // only want to get the latest entry
 	expect(entry[0].raw).toBe('# 2024.8.13\n\n');
@@ -85,7 +73,7 @@ test('Get today from single', () => {
 
 	const initial = `# ${date}\n\n## Added\n\n- My addition\n`;
 
-	const entry = getHistory(marked.lexer(initial), { cwd: '.', today: true }, settings);
+	const entry = getHistory(marked.lexer(initial), { today: true }, settings);
 
 	expect(entry.length).toBe(3); // only want to get the latest entry
 	expect(entry[0].raw).toBe(`# ${date}\n\n`);
@@ -100,7 +88,7 @@ test('Get today from multiple', () => {
 
 	const initial = `# ${date}\n\n## Added\n\n- My addition\n\n# 2024.8.13\n\n## Added\n\n- My addition\n`;
 
-	const entry = getHistory(marked.lexer(initial), { cwd: '.', today: true }, settings);
+	const entry = getHistory(marked.lexer(initial), { today: true }, settings);
 
 	expect(entry.length).toBe(4); // only want to get the latest entry
 	expect(entry[0].raw).toBe(`# ${date}\n\n`);
@@ -111,11 +99,7 @@ test('Get today from multiple', () => {
 test('Finding nothing for date', () => {
 	const initial = `# 2024.8.13\n\n## Added\n\n- My addition\n`;
 
-	const entry = getHistory(
-		marked.lexer(initial),
-		{ cwd: '.', today: false, date: '2024.8.14' },
-		settings
-	);
+	const entry = getHistory(marked.lexer(initial), { today: false, date: '2024.8.14' }, settings);
 
 	expect(entry.length).toBe(0); // should be empty
 });
@@ -123,7 +107,7 @@ test('Finding nothing for date', () => {
 test('Finding nothing for latest', () => {
 	const initial = ``;
 
-	const entry = getHistory(marked.lexer(initial), { cwd: '.', today: false }, settings);
+	const entry = getHistory(marked.lexer(initial), { today: false }, settings);
 
 	expect(entry.length).toBe(0); // should be empty
 });

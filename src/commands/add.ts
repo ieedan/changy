@@ -147,6 +147,7 @@ export function addChange(
 	let i = 0;
 	let foundCategory: number | undefined;
 	let foundDate: number | undefined;
+	let addedChange = false;
 	while (i < ast.length) {
 		// just a clone we don't want to mutate
 		let node = newAst[i];
@@ -159,7 +160,8 @@ export function addChange(
 			foundDate != undefined &&
 			node.type == 'heading' &&
 			node.depth == 2 &&
-			node.text == response.category
+			node.text == response.category &&
+			!addedChange
 		) {
 			foundCategory = i;
 			i++;
@@ -171,6 +173,8 @@ export function addChange(
 
 				// modify the tree here
 				newAst[i].raw += `\n- ${response.change}`;
+
+				addedChange = true;
 			}
 		}
 
