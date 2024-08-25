@@ -1,6 +1,6 @@
 {
 	"name": "changy",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A simple changelog CLI for user facing changelogs.",
 	"type": "module",
 	"main": "/dist/index.mjs",
@@ -38,14 +38,20 @@
 	"sideEffects": false,
 	"typesVersions": {
 		"*": {
-			"*": ["./dist/*", "./dist/index.d.ts"]
+			"*": [
+				"./dist/*",
+				"./dist/index.d.ts"
+			]
 		}
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ieedan/changy"
 	},
-	"keywords": ["changelog", "date"],
+	"keywords": [
+		"changelog",
+		"date"
+	],
 	"author": "Aidan Bleser",
 	"license": "MIT",
 	"bugs": {
