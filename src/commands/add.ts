@@ -39,7 +39,9 @@ async function run(change: string | undefined, options: Options): Promise<void> 
 	const config = settings.get(options.cwd);
 
 	if (config == null) {
-		error(`You haven't setup changy yet run ${color.cyan('`changy init`')} first.`);
+		error(
+			`You haven't setup ${color.cyan('changy')} yet. Run ${color.cyan('`changy init`')} first.`
+		);
 		process.exit(0);
 	}
 
