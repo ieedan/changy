@@ -1,6 +1,6 @@
+import { marked } from 'marked';
 import { expect, test } from 'vitest';
 import { getHistory } from '../src/commands/latest';
-import { marked } from 'marked';
 import type { Settings } from '../src/utils/settings';
 
 const settings: Settings = {

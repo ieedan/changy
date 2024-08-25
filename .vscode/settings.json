@@ -1,3 +1,9 @@
 {
-	"cSpell.words": ["changy", "changyrc", "Millis"]
+	"cSpell.words": ["changy", "changyrc", "Millis"],
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
 }

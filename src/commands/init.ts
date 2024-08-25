@@ -1,6 +1,6 @@
+import path from 'path';
 import { Command } from 'commander';
 import fs from 'fs-extra';
-import path from 'path';
 import z from 'zod';
 import { error, intro, success } from '../utils/index';
 import { SETTINGS_FILE } from '../utils/settings';

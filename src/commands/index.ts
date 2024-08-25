@@ -1,6 +1,6 @@
 import { add } from './add';
-import { latest } from './latest';
-import { init } from './init';
 import { format } from './format';
+import { init } from './init';
+import { latest } from './latest';
 
 export { add, latest, init, format };

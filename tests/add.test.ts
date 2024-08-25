@@ -1,7 +1,7 @@
+import { marked } from 'marked';
 import { expect, test } from 'vitest';
 import { addChange } from '../src/commands/add';
 import type { Settings } from '../src/utils/settings';
-import { marked } from 'marked';
 
 const settings: Settings = {
 	path: 'CHANGELOG.md',
