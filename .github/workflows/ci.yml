@@ -22,7 +22,7 @@ jobs:
               run: pnpm install
 
             - name: Lint
-              run: biome check
+              run: pnpm run lint
 
             - name: Test
               run: pnpm run test
