@@ -12,14 +12,15 @@ jobs:
         name: Build & Publish Release
         if: github.repository == 'ieedan/changy'
         runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Repo
-              uses: actions/checkout@v4
 
-            - name: Use Node v18
-              uses: actions/setup-node@v3
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
               with:
-                  node-version: 18
+                  version: 9
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '20'
 
             - name: Install dependencies
               run: npm install
