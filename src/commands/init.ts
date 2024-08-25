@@ -1,4 +1,5 @@
 import path from 'path';
+import color from 'chalk';
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import z from 'zod';
@@ -41,7 +42,7 @@ export const init = new Command()
 
 async function run(options: Options): Promise<void> {
 	if (settings.get(options.cwd) !== null) {
-		success('changy already initialized!');
+		success(`${color.cyan('changy')} already initialized!`);
 		process.exit(1);
 	}
 
