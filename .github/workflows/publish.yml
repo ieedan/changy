@@ -23,7 +23,7 @@ jobs:
                   node-version: '20'
 
             - name: Install dependencies
-              run: npm install
+              run: pnpm install
 
             - name: Create Release Pull Request or Publish
               id: changesets
@@ -31,7 +31,7 @@ jobs:
               with:
                   commit: 'chore(release): version package'
                   title: 'chore(release): version package'
-                  publish: npm run ci:release
+                  publish: pnpm run ci:release
               env:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
