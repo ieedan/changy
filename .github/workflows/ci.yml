@@ -10,22 +10,22 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-          - uses: actions/checkout@v4
-          - uses: pnpm/action-setup@v4
-            with:
-              version: 9
-          - uses: actions/setup-node@v3
-            with:
-                node-version: '20'
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 9
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '20'
 
-          - name: Install dependencies
-            run: npm install
+            - name: Install dependencies
+              run: npm install
 
-          - name: Lint
-            run: npm run lint
+            - name: Lint
+              run: npm run lint
 
-          - name: Test
-            run: npm run test
+            - name: Test
+              run: npm run test
 
-          - name: Build
-            run: npm run build
+            - name: Build
+              run: npm run build
