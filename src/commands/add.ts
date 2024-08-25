@@ -1,19 +1,19 @@
-import { Command } from 'commander';
-import fs from 'fs-extra';
 import path from 'path';
-import z from 'zod';
-import { marked, type Token } from 'marked';
+import { Command } from 'commander';
 import pkg from 'enquirer';
+import fs from 'fs-extra';
+import { type Token, marked } from 'marked';
+import z from 'zod';
 const { prompt } = pkg;
-import { DateTime } from 'luxon';
-import * as settings from '../utils/settings';
 import color from 'chalk';
-import { cancel, error, intro, success } from '../utils';
+import { DateTime } from 'luxon';
 import TerminalRenderer from 'marked-terminal';
-import { format } from '../utils/format';
 import rfdc from 'rfdc';
-import { getHistory } from './latest';
+import { cancel, error, intro, success } from '../utils';
 import { astToString } from '../utils/ast';
+import { format } from '../utils/format';
+import * as settings from '../utils/settings';
+import { getHistory } from './latest';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
@@ -114,7 +114,7 @@ async function run(change: string | undefined, options: Options): Promise<void> 
 async function confirmChangelog(...nodes: Token[]): Promise<boolean> {
 	// render markdown in terminal
 	const md = await marked(astToString([...nodes]), {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		// biome-ignore lint/suspicious/noExplicitAny: The type doesn't work here
 		renderer: new TerminalRenderer() as any,
 	});
 

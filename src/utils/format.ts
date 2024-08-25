@@ -1,7 +1,7 @@
-import { type Token } from 'marked';
-import type { Settings } from './settings';
-import { toMap } from '.';
 import { DateTime } from 'luxon';
+import { type Token } from 'marked';
+import { toMap } from '.';
+import type { Settings } from './settings';
 
 export type Options = {
 	cwd: string;

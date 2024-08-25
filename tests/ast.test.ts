@@ -1,6 +1,6 @@
-import { expect, test } from 'vitest';
-import { astToObject, type ChangelogEntry } from '../src/utils/ast';
 import { marked } from 'marked';
+import { expect, test } from 'vitest';
+import { type ChangelogEntry, astToObject } from '../src/utils/ast';
 
 test('Correct astToObject output single', () => {
 	const initial = '# 2024.8.14\n\n## Added\n\n- Added this thing\n';

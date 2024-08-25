@@ -10,8 +10,8 @@
 	"scripts": {
 		"start": "unbuild && node bin.mjs",
 		"test": "vitest",
-		"format": "prettier . --write",
-		"lint": "prettier --check . && eslint .",
+		"format": "biome format --write",
+		"lint": "biome check",
 		"build": "unbuild",
 		"check": "tsc --noEmit",
 		"ci:release": "npm run build && changeset publish"
@@ -38,20 +38,14 @@
 	"sideEffects": false,
 	"typesVersions": {
 		"*": {
-			"*": [
-				"./dist/*",
-				"./dist/index.d.ts"
-			]
+			"*": ["./dist/*", "./dist/index.d.ts"]
 		}
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ieedan/changy"
 	},
-	"keywords": [
-		"changelog",
-		"date"
-	],
+	"keywords": ["changelog", "date"],
 	"author": "Aidan Bleser",
 	"license": "MIT",
 	"bugs": {
@@ -72,6 +66,7 @@
 		"zod-validation-error": "^3.3.1"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
 		"@changesets/cli": "^2.27.7",
 		"@cspell/eslint-plugin": "^8.13.3",
 		"@eslint/js": "^9.9.0",

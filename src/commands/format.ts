@@ -1,13 +1,13 @@
+import path from 'path';
+import color from 'chalk';
 import { Command } from 'commander';
 import fs from 'fs-extra';
-import path from 'path';
+import { type Token, type TokensList, marked } from 'marked';
 import z from 'zod';
-import { marked, type TokensList, type Token } from 'marked';
 import { error, success } from '../utils';
-import * as settings from '../utils/settings';
-import color from 'chalk';
-import { format as fmt } from '../utils/format';
 import { astToString } from '../utils/ast';
+import { format as fmt } from '../utils/format';
+import * as settings from '../utils/settings';
 
 const optionsSchema = z.object({
 	cwd: z.string(),
