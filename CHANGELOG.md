@@ -1,5 +1,11 @@
 # changy
 
+## 0.2.2
+
+### Patch Changes
+
+- d2547f0: Changed the punctuation and coloring in some messages.
+
 ## 0.2.1
 
 ### Patch Changes
