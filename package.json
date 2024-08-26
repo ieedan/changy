@@ -14,11 +14,11 @@
 		"lint": "biome check",
 		"build": "unbuild",
 		"check": "tsc --noEmit",
-		"ci:release": "pnpm build && changeset publish",
+		"ci:release": "unbuild && changeset publish",
 		"changeset": "changeset"
 	},
 	"files": [
-		"dist",
+		"dist/**/*",
 		"src",
 		"package.json",
 		"package-lock.json",
@@ -39,20 +39,14 @@
 	"sideEffects": false,
 	"typesVersions": {
 		"*": {
-			"*": [
-				"./dist/*",
-				"./dist/index.d.ts"
-			]
+			"*": ["./dist/*", "./dist/index.d.ts"]
 		}
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ieedan/changy"
 	},
-	"keywords": [
-		"changelog",
-		"date"
-	],
+	"keywords": ["changelog", "date"],
 	"author": "Aidan Bleser",
 	"license": "MIT",
 	"bugs": {

@@ -31,7 +31,7 @@ jobs:
               with:
                   commit: 'chore(release): version package'
                   title: 'chore(release): version package'
-                  publish: pnpm run ci:release
+                  publish: pnpm ci:release
               env:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
