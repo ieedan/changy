@@ -1,5 +1,11 @@
 # changy
 
+## 0.2.3
+
+### Patch Changes
+
+- c2fb233: Fixes issue with building that would cause issues when installing or using.
+
 ## 0.2.2
 
 ### Patch Changes
