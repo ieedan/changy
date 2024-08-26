@@ -1,5 +1,11 @@
 # changy
 
+## 0.2.4
+
+### Patch Changes
+
+- 15a5dd0: Still trying to fix build issues
+
 ## 0.2.3
 
 ### Patch Changes
