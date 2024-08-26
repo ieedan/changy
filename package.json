@@ -14,7 +14,7 @@
 		"lint": "biome check",
 		"build": "unbuild",
 		"check": "tsc --noEmit",
-		"ci:release": "npm run build && changeset publish"
+		"ci:release": "pnpm build && changeset publish"
 	},
 	"files": [
 		"dist",
