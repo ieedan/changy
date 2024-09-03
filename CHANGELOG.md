@@ -1,5 +1,11 @@
 # changy
 
+## 0.2.5
+
+### Patch Changes
+
+- 3528a8a: Fixed issue where the `add` command would add a change for every heading.
+
 ## 0.2.4
 
 ### Patch Changes
