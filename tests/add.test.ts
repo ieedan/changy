@@ -85,3 +85,30 @@ test('Adds correctly with multiple', () => {
 	expect(newAst[5].raw).toBe('## Added\n\n');
 	expect(newAst[6].raw).toBe('- My addition 2\n');
 });
+
+test('Adds correctly with multiple and multiple today', () => {
+	const today = new Date();
+
+	const date = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
+
+	const initial = `# ${date}\n\n## Added\n\n- My addition\n# 2024.8.13\n\n## Added\n\n- My addition 2\n\n## Changed\n\n- Some change 2\n`;
+
+	const newAst = addChange(
+		{ change: 'New change', category: 'Changed' },
+		date,
+		settings,
+		marked.lexer(initial)
+	);
+
+	expect(newAst[0].raw).toBe(`# ${date}\n\n`);
+	expect(newAst[1].raw).toBe('## Added\n\n');
+	expect(newAst[2].raw).toBe('- My addition\n');
+	expect(newAst[3].raw).toBe('\n');
+	expect(newAst[4].raw).toBe('## Changed\n\n');
+	expect(newAst[5].raw).toBe('- New change');
+	expect(newAst[6].raw).toBe('\n\n');
+	expect(newAst[7].raw).toBe('# 2024.8.13\n\n');
+	expect(newAst[8].raw).toBe('## Added\n\n');
+	expect(newAst[9].raw).toBe('- My addition 2');
+	expect(newAst[10].raw).toBe('\n\n');
+});
