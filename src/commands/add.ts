@@ -186,7 +186,7 @@ export function addChange(
 			((node.type == 'heading' && node.depth == 1 && foundDate != i) ||
 				i >= newAst.length - 1)
 		) {
-			if (foundCategory == undefined) {
+			if (foundCategory == undefined && !addedChange) {
 				// make marked generate the correct tokens for us
 				const tokens = marked
 					.lexer(`## ${response.category}\n\n- ${response.change}\n\n`)
@@ -199,6 +199,8 @@ export function addChange(
 					// put before this heading
 					newAst = [...newAst.slice(0, i), ...tokens, ...newAst.slice(i)];
 				}
+
+				addedChange = true;
 			}
 		}
 
