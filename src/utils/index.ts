@@ -1,4 +1,4 @@
-import color from "chalk";
+import color from "npm:chalk";
 
 export const TITLE = "\r\n" +
   " ______     __  __     ______     __   __     ______     __  __       \r\n" +

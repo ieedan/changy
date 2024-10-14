@@ -1,5 +1,5 @@
-import { DateTime } from "luxon";
-import type { Token } from "marked";
+import { DateTime } from "npm:luxon";
+import type { Token } from "npm:marked";
 import { toMap } from "./index.ts";
 import type { Settings } from "./settings.ts";
 

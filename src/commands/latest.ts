@@ -1,9 +1,9 @@
 import path from "node:path";
-import color from "chalk";
-import { Command } from "commander";
-import fs from "fs-extra";
-import { marked, type Token } from "marked";
-import z from "zod";
+import color from "npm:chalk";
+import { Command } from "npm:commander";
+import fs from "npm:fs-extra";
+import { marked, type Token } from "npm:marked";
+import z from "npm:zod";
 import { error } from "../utils/index.ts";
 import { astToObject, astToString } from "../utils/ast.ts";
 import { format } from "../utils/format.ts";

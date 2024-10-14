@@ -1,5 +1,18 @@
 {
-	"imports": {
-		"@std/assert": "jsr:@std/assert@1"
-	}
+  "name": "@changy/cli",
+  "version": "0.2.5",
+  "exports": "./main.ts",
+  "license": "MIT",
+  "imports": {
+    "chalk": "npm:chalk@^5.3.0",
+    "commander": "npm:commander@^12.1.0",
+    "enquirer": "npm:enquirer@^2.4.1",
+    "fs-extra": "npm:fs-extra@^11.2.0",
+    "luxon": "npm:luxon@^3.5.0",
+    "marked": "npm:marked@^14.1.2",
+    "marked-terminal": "npm:marked-terminal@^7.1.0",
+    "rfdc": "npm:rfdc@^1.4.1",
+    "zod": "npm:zod@^3.23.8",
+    "zod-validation-error": "npm:zod-validation-error@^3.4.0"
+  }
 }

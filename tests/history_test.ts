@@ -1,7 +1,7 @@
-import { marked } from "marked";
+import { marked } from "npm:marked";
 import { getHistory } from "../src/commands/latest.ts";
 import type { Settings } from "../src/utils/settings.ts";
-import { assertEquals } from "@std/assert/equals";
+import { assertEquals } from "jsr:@std/assert/equals";
 
 const settings: Settings = {
   path: "CHANGELOG.md",

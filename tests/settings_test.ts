@@ -1,4 +1,4 @@
-import { assertThrows } from "@std/assert/throws";
+import { assertThrows } from "jsr:@std/assert/throws";
 import { type Settings, settingsSchema } from "../src/utils/settings.ts";
 
 Deno.test("Catches invalid timezone", () => {

@@ -1,8 +1,8 @@
 import path from "node:path";
-import color from "chalk";
-import { Command } from "commander";
-import fs from "fs-extra";
-import z from "zod";
+import color from "npm:chalk";
+import { Command } from "npm:commander";
+import fs from "npm:fs-extra";
+import z from "npm:zod";
 import { error, intro, success } from "../utils/index.ts";
 import { SETTINGS_FILE } from "../utils/settings.ts";
 import * as settings from "../utils/settings.ts";

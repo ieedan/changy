@@ -1,4 +1,4 @@
-import { marked } from "marked";
+import { marked } from "npm:marked";
 import { assertEquals } from "jsr:@std/assert";
 import { format, stripRawHeading } from "../src/utils/format.ts";
 import type { Settings } from "../src/utils/settings.ts";

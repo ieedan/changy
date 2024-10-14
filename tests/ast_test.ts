@@ -1,4 +1,4 @@
-import { marked } from "marked";
+import { marked } from "npm:marked";
 import { astToObject, type ChangelogEntry } from "../src/utils/ast.ts";
 import { assertEquals } from "jsr:@std/assert";
 
