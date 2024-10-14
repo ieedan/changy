@@ -5,12 +5,8 @@ on:
     branches:
       - main
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
-
 jobs:
-  release:
-    name: Build & Publish Release
-    if: github.repository == 'ieedan/changy'
+  publish:
     runs-on: ubuntu-latest
 
     permissions:
