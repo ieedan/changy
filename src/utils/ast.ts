@@ -1,4 +1,4 @@
-import type { Token, Tokens } from "npm:marked";
+import type { Token, Tokens } from "marked";
 
 export type ChangelogEntry = {
   date: string;
