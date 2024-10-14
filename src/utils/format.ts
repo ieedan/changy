@@ -1,16 +1,16 @@
-import { DateTime } from 'luxon';
-import { type Token } from 'marked';
-import { toMap } from '.';
-import type { Settings } from './settings';
+import { DateTime } from "luxon";
+import type { Token } from "marked";
+import { toMap } from "./index.ts";
+import type { Settings } from "./settings.ts";
 
 export type Options = {
-	cwd: string;
+  cwd: string;
 };
 
 type Section = {
-	heading: Token;
-	tokens?: Token[];
-	sections?: Section[];
+  heading: Token;
+  tokens?: Token[];
+  sections?: Section[];
 };
 
 /** Formats the provided list of tokens.
@@ -22,152 +22,163 @@ type Section = {
  * @param ast Tokens ready to be formatted
  */
 export function format(settings: Settings, ast: Token[]): Token[] {
-	// this map contains the categories next to their index value
-	// they should be sorted with the lowest index value at the top
-	const categoriesMap = toMap(settings.changeCategories, (item, i) => [item, i]);
+  // this map contains the categories next to their index value
+  // they should be sorted with the lowest index value at the top
+  const categoriesMap = toMap(settings.changeCategories, (item, i) => [
+    item,
+    i,
+  ]);
 
-	const changelogs: Token[][] = [];
+  const changelogs: Token[][] = [];
 
-	let i = 0;
-	let currentChangelog: Section | undefined = undefined;
+  let i = 0;
+  let currentChangelog: Section | undefined = undefined;
 
-	let currentSection: Section | undefined = undefined;
+  let currentSection: Section | undefined = undefined;
 
-	while (i < ast.length) {
-		const node = ast[i];
+  while (i < ast.length) {
+    const node = ast[i];
 
-		if (node.type == 'heading' && node.depth == 1) {
-			if (currentChangelog != undefined) {
-				if (currentSection != undefined) {
-					currentSection.tokens = correctToExpectedNewLines(currentSection.tokens ?? []);
-					if (currentChangelog.sections) {
-						currentChangelog.sections.push(currentSection);
-					} else {
-						currentChangelog.sections = [currentSection];
-					}
-				}
+    if (node.type === "heading" && node.depth === 1) {
+      if (currentChangelog !== undefined) {
+        if (currentSection !== undefined) {
+          currentSection.tokens = correctToExpectedNewLines(
+            currentSection.tokens ?? [],
+          );
+          if (currentChangelog.sections) {
+            currentChangelog.sections.push(currentSection);
+          } else {
+            currentChangelog.sections = [currentSection];
+          }
+        }
 
-				currentSection = undefined;
+        currentSection = undefined;
 
-				// sort the change categories
-				currentChangelog.sections?.sort((a, b) => {
-					const aHeading = categoriesMap.get(stripRawHeading(a.heading.raw)) ?? 0;
-					const bHeading = categoriesMap.get(stripRawHeading(b.heading.raw)) ?? 0;
+        // sort the change categories
+        currentChangelog.sections?.sort((a, b) => {
+          const aHeading = categoriesMap.get(stripRawHeading(a.heading.raw)) ??
+            0;
+          const bHeading = categoriesMap.get(stripRawHeading(b.heading.raw)) ??
+            0;
 
-					return aHeading - bHeading;
-				});
+          return aHeading - bHeading;
+        });
 
-				let tokens = sectionToTokens(currentChangelog);
-				tokens = correctToExpectedNewLines(tokens);
-				// add last changelog to stack
-				changelogs.push(tokens);
-				currentChangelog = undefined;
-			}
+        let tokens = sectionToTokens(currentChangelog);
+        tokens = correctToExpectedNewLines(tokens);
+        // add last changelog to stack
+        changelogs.push(tokens);
+        currentChangelog = undefined;
+      }
 
-			currentChangelog = undefined;
-			currentChangelog = { heading: node };
-			i++;
-			continue;
-		}
+      currentChangelog = undefined;
+      currentChangelog = { heading: node };
+      i++;
+      continue;
+    }
 
-		if (currentChangelog && node.type == 'heading' && node.depth == 2) {
-			if (currentSection != undefined) {
-				currentSection.tokens = correctToExpectedNewLines(currentSection.tokens ?? []);
-				if (currentChangelog.sections) {
-					currentChangelog.sections.push(currentSection);
-				} else {
-					currentChangelog.sections = [currentSection];
-				}
-			}
+    if (currentChangelog && node.type === "heading" && node.depth === 2) {
+      if (currentSection !== undefined) {
+        currentSection.tokens = correctToExpectedNewLines(
+          currentSection.tokens ?? [],
+        );
+        if (currentChangelog.sections) {
+          currentChangelog.sections.push(currentSection);
+        } else {
+          currentChangelog.sections = [currentSection];
+        }
+      }
 
-			currentSection = undefined;
-			currentSection = { heading: node };
-			i++;
-			continue;
-		}
+      currentSection = undefined;
+      currentSection = { heading: node };
+      i++;
+      continue;
+    }
 
-		if (currentSection) {
-			if (currentSection.tokens) {
-				currentSection.tokens.push(node);
-			} else {
-				currentSection.tokens = [node];
-			}
-		}
+    if (currentSection) {
+      if (currentSection.tokens) {
+        currentSection.tokens.push(node);
+      } else {
+        currentSection.tokens = [node];
+      }
+    }
 
-		i++;
-	}
+    i++;
+  }
 
-	// add it at the end in case it didn't get added
-	if (currentChangelog != undefined) {
-		if (currentSection != undefined) {
-			currentSection.tokens = correctToExpectedNewLines(currentSection.tokens ?? []);
-			if (currentChangelog.sections) {
-				currentChangelog.sections.push(currentSection);
-			} else {
-				currentChangelog.sections = [currentSection];
-			}
-		}
+  // add it at the end in case it didn't get added
+  if (currentChangelog !== undefined) {
+    if (currentSection !== undefined) {
+      currentSection.tokens = correctToExpectedNewLines(
+        currentSection.tokens ?? [],
+      );
+      if (currentChangelog.sections) {
+        currentChangelog.sections.push(currentSection);
+      } else {
+        currentChangelog.sections = [currentSection];
+      }
+    }
 
-		// sort the change categories
-		currentChangelog.sections?.sort((a, b) => {
-			const aHeading = categoriesMap.get(stripRawHeading(a.heading.raw)) ?? 0;
-			const bHeading = categoriesMap.get(stripRawHeading(b.heading.raw)) ?? 0;
+    // sort the change categories
+    currentChangelog.sections?.sort((a, b) => {
+      const aHeading = categoriesMap.get(stripRawHeading(a.heading.raw)) ?? 0;
+      const bHeading = categoriesMap.get(stripRawHeading(b.heading.raw)) ?? 0;
 
-			return aHeading - bHeading;
-		});
+      return aHeading - bHeading;
+    });
 
-		let tokens = sectionToTokens(currentChangelog);
-		tokens = correctToExpectedNewLines(tokens);
-		// add last changelog to stack
-		changelogs.push(tokens);
-	}
+    let tokens = sectionToTokens(currentChangelog);
+    tokens = correctToExpectedNewLines(tokens);
+    // add last changelog to stack
+    changelogs.push(tokens);
+  }
 
-	// sort by date
-	changelogs.sort((a, b) => compareRawDate(a[0].raw, b[0].raw));
+  // sort by date
+  changelogs.sort((a, b) => compareRawDate(a[0].raw, b[0].raw));
 
-	let newAst: Token[] = [];
+  let newAst: Token[] = [];
 
-	for (const log of changelogs) {
-		newAst.push(...log);
-	}
+  for (const log of changelogs) {
+    newAst.push(...log);
+  }
 
-	newAst = correctToExpectedNewLines(newAst, 1);
+  newAst = correctToExpectedNewLines(newAst, 1);
 
-	return newAst;
+  return newAst;
 }
 
 function compareRawDate(a: string, b: string): number {
-	return rawToDate(b) - rawToDate(a);
+  return rawToDate(b) - rawToDate(a);
 }
 
 export function stripRawHeading(str: string): string {
-	const stripped = str.replaceAll('#', '').trim();
+  const stripped = str.replaceAll("#", "").trim();
 
-	return stripped;
+  return stripped;
 }
 
 function rawToDate(str: string): number {
-	const stripped = stripRawHeading(str);
+  const stripped = stripRawHeading(str);
 
-	const parsed = DateTime.fromFormat(stripped, 'yyyy.M.d');
+  const parsed = DateTime.fromFormat(stripped, "yyyy.M.d");
 
-	return parsed.toMillis();
+  return parsed.toMillis();
 }
 
 function sectionToTokens(section: Section): Token[] {
-	const tokens = [section.heading];
+  const tokens = [section.heading];
 
-	if (section.tokens) {
-		tokens.push(...section.tokens);
-	}
+  if (section.tokens) {
+    tokens.push(...section.tokens);
+  }
 
-	if (section.sections) {
-		for (const sec of section.sections) {
-			tokens.push(...sectionToTokens(sec));
-		}
-	}
+  if (section.sections) {
+    for (const sec of section.sections) {
+      tokens.push(...sectionToTokens(sec));
+    }
+  }
 
-	return tokens;
+  return tokens;
 }
 
 /** This will ensure that the end of the tokens is the expected new line count
@@ -176,47 +187,50 @@ function sectionToTokens(section: Section): Token[] {
  * @param count Amount of new lines to add at the end `default` 2
  * @returns
  */
-export function correctToExpectedNewLines(tokens: Token[], count: number = 2): Token[] {
-	if (tokens.length == 0) return [];
+export function correctToExpectedNewLines(
+  tokens: Token[],
+  count = 2,
+): Token[] {
+  if (tokens.length === 0) return [];
 
-	let newTokens = [...tokens];
+  let newTokens = [...tokens];
 
-	let final = newTokens[newTokens.length - 1];
+  let final = newTokens[newTokens.length - 1];
 
-	// this will trim any additional `space` tokens
-	while (final.type == 'space') {
-		newTokens = newTokens.slice(0, newTokens.length - 1);
-		final = newTokens[newTokens.length - 1];
-	}
+  // this will trim any additional `space` tokens
+  while (final.type === "space") {
+    newTokens = newTokens.slice(0, newTokens.length - 1);
+    final = newTokens[newTokens.length - 1];
+  }
 
-	// all of this ensures that we insert with the correct line spacing
+  // all of this ensures that we insert with the correct line spacing
 
-	// check last token for trailing new lines
-	let lastIndex = final.raw.length - 1;
-	let newLines = 0;
-	while (lastIndex >= 0 && final.raw[lastIndex] === '\n') {
-		newLines++;
-		lastIndex--;
-	}
+  // check last token for trailing new lines
+  let lastIndex = final.raw.length - 1;
+  let newLines = 0;
+  while (lastIndex >= 0 && final.raw[lastIndex] === "\n") {
+    newLines++;
+    lastIndex--;
+  }
 
-	// trims additional whitespace from last token
-	if (newLines > count) {
-		// the raw is the only thing that matters in this case anyways
-		final.raw = final.raw.slice(0, final.raw.length - (newLines - count));
+  // trims additional whitespace from last token
+  if (newLines > count) {
+    // the raw is the only thing that matters in this case anyways
+    final.raw = final.raw.slice(0, final.raw.length - (newLines - count));
 
-		newTokens[newTokens.length - 1] = final;
-	}
+    newTokens[newTokens.length - 1] = final;
+  }
 
-	// based on how many trailing new lines there were we will add or not add our own new lines
+  // based on how many trailing new lines there were we will add or not add our own new lines
 
-	const necessarySpacing = count - newLines;
+  const necessarySpacing = count - newLines;
 
-	if (necessarySpacing > 0) {
-		newTokens.push({
-			type: 'space',
-			raw: '\n'.repeat(necessarySpacing),
-		});
-	}
+  if (necessarySpacing > 0) {
+    newTokens.push({
+      type: "space",
+      raw: "\n".repeat(necessarySpacing),
+    });
+  }
 
-	return newTokens;
+  return newTokens;
 }

@@ -1,0 +1,45 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@std/assert@*": "1.0.6",
+    "jsr:@std/assert@1": "1.0.6",
+    "jsr:@std/internal@^1.0.4": "1.0.4"
+  },
+  "jsr": {
+    "@std/assert@1.0.6": {
+      "integrity": "1904c05806a25d94fe791d6d883b685c9e2dcd60e4f9fc30f4fc5cf010c72207",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/internal@1.0.4": {
+      "integrity": "62e8e4911527e5e4f307741a795c0b0a9e6958d0b3790716ae71ce085f755422"
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1"
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:@changesets/cli@^2.27.7",
+        "npm:@types/fs-extra@^11.0.4",
+        "npm:@types/luxon@^3.4.2",
+        "npm:@types/marked-terminal@^6.1.1",
+        "npm:@types/node@^22.2.0",
+        "npm:chalk@^5.3.0",
+        "npm:commander@^12.1.0",
+        "npm:enquirer@^2.4.1",
+        "npm:fs-extra@^11.2.0",
+        "npm:globals@^15.9.0",
+        "npm:luxon@^3.5.0",
+        "npm:marked-terminal@^7.1.0",
+        "npm:marked@^13.0.3",
+        "npm:remark-parse@11",
+        "npm:rfdc@^1.4.1",
+        "npm:zod-validation-error@^3.3.1",
+        "npm:zod@^3.23.8"
+      ]
+    }
+  }
+}

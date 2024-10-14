@@ -1,3 +1,3 @@
-import changy from './changy';
+import changy from "./changy.ts";
 
 changy.parse();

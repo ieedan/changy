@@ -1,6 +1,6 @@
-import { add } from './add';
-import { format } from './format';
-import { init } from './init';
-import { latest } from './latest';
+import { add } from "./add.ts";
+import { format } from "./format.ts";
+import { init } from "./init.ts";
+import { latest } from "./latest.ts";
 
-export { add, latest, init, format };
+export { add, format, init, latest };
