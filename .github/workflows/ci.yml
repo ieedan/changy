@@ -1,31 +1,25 @@
 name: CI
 
 on:
-    pull_request:
-        branches:
-            - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-    CI:
-        runs-on: ubuntu-latest
+  CI:
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-              with:
-                  version: 9
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: '20'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: "2.0.0"
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Format
+        run: deno fmt --check
 
-            - name: Lint
-              run: pnpm lint
+      - name: Lint
+        run: deno lint
 
-            - name: Test
-              run: pnpm test
-
-            - name: Build
-              run: pnpm build
+      - name: Test
+        run: deno test -A

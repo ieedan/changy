@@ -10,13 +10,14 @@ npm install -g changy
 
 ## Why?
 
-Changesets are awesome but our users don't care about versioning. **changy** makes it easy to
-generate date-based changelogs that can show your applications development progress.
+Changesets are awesome but our users don't care about versioning. **changy**
+makes it easy to generate date-based changelogs that can show your applications
+development progress.
 
 ## .changyrc
 
-The config file for **changy**. This allows you to configure your time zone as well as they change
-categories that will be listed in the changelog.
+The config file for **changy**. This allows you to configure your time zone as
+well as they change categories that will be listed in the changelog.
 
 ```js
 {
@@ -32,8 +33,8 @@ categories that will be listed in the changelog.
 
 ### `changeCategories`
 
-These are what determines the categories of your changes and the order they will show up in your
-changelog.
+These are what determines the categories of your changes and the order they will
+show up in your changelog.
 
 For example take this configuration:
 
@@ -64,7 +65,8 @@ Resulting changelog format:
 ```
 
 > [!NOTE]
-> These will only appear in your changelog if they have changes associated with them.
+> These will only appear in your changelog if they have changes associated with
+> them.
 
 ## CLI Reference
 
