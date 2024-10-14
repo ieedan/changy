@@ -1,6 +1,6 @@
 {
   "name": "@changy/cli",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "exports": "./main.ts",
   "license": "MIT",
   "imports": {
