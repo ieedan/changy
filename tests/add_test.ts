@@ -1,4 +1,4 @@
-import { marked } from "npm:marked";
+import { marked } from "marked";
 import { addChange } from "../src/commands/add.ts";
 import type { Settings } from "../src/utils/settings.ts";
 import { assertEquals } from "jsr:@std/assert";

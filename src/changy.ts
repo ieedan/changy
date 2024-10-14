@@ -1,5 +1,5 @@
-import color from "npm:chalk";
-import { program } from "npm:commander";
+import color from "chalk";
+import { program } from "commander";
 import { add, format, init, latest } from "./commands/index.ts";
 
 const changy = program
