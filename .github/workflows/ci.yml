@@ -15,9 +15,6 @@ jobs:
         with:
           deno-version: "2.0.0"
 
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Lint
         run: deno fmt --check
 
