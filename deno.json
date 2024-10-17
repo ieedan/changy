@@ -3,6 +3,9 @@
   "version": "0.2.6",
   "exports": "./main.ts",
   "license": "MIT",
+  "tasks": {
+    "build": "deno run -A build_npm.ts"
+  },
   "imports": {
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "chalk": "npm:chalk@^5.3.0",
